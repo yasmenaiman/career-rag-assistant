@@ -85,7 +85,7 @@ The offline ingestion pipeline is located in `ingestion/ingest.py`.
 Executed in `worker/src/index.js` during every user interaction:
 
 ### Step 1: Query Translation & Reformulation Bridge
-- If the query is in Arabic, an LLM translation call using the Chat Messages API converts the query into concise English search keywords (e.g., *"ازاي اجهز لمقابلة الـ behavioral وايه هي طريقة الـ STAR؟"* ➡️ `"behavioral interview STAR method preparation"`).
+- If the query is in Arabic, an LLM translation call using the Chat Messages API converts the query into concise English search keywords (e.g., *"ازاي اجهز لمقابلة الـ behavioral وايه هي طريقة الـ STAR؟"* -> `"behavioral interview STAR method preparation"`).
 - *Critical Engineering Gotcha*: Using raw completion prompts caused Llama 3 to output conversational chatter (*"Here is your translation:"*). Using the `messages` array with a system role enforces zero-chatter keyword extraction.
 - For conversational follow-ups (e.g., *"give me an example of the second point"*), previous turns from `history` are fed to generate a standalone search query.
 

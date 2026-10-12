@@ -1,4 +1,4 @@
-# Masar AI (مسار) — Precision Serverless RAG Assistant
+# Masar AI — Precision Serverless RAG Assistant
 
 <p align="center">
   <img src="frontend/assets/masar_3d_emblem.png" alt="Masar AI Emblem" width="120" style="border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);" />
@@ -25,27 +25,27 @@
 
 ---
 
-## 📌 Executive Architecture Summary
+## Executive Architecture Summary
 
-Most production RAG systems depend on heavy, expensive infrastructure stacks (e.g., dedicated LangChain microservices, OpenAI API fees, Pinecone or Milvus vector databases, and container cold starts). 
+Most production RAG implementations rely on heavy infrastructure stacks (dedicated Python microservice containers, hosted vector subscriptions, and multi-tier cloud clusters).
 
-**Masar AI** demonstrates a **modern, zero-cost, serverless AI paradigm**:
-- **Zero Containers / Zero Cold Starts**: Runs on Cloudflare V8 isolates with global edge distribution (<15ms edge dispatch).
-- **Two-Stage Precision Retrieval**: Vector approximate nearest neighbors (ANN) retrieval via **Vectorize**, followed by neural cross-encoder verification via **Workers AI BGE-Reranker**.
-- **Hierarchical Semantic Boundary Chunking**: Eliminates naive sliding-window errors by preserving semantic section units with injected contextual metadata headers.
-- **Cross-Language Semantic Bridge**: Translates and reformulates Arabic queries into dense English vector targets on the edge before retrieval, ensuring zero semantic drift against English corpora.
-- **Resilient Fallback Inference**: 4-tier model failover chain guarding against Cloudflare AI rate limits and quota spikes.
+**Masar AI** demonstrates a **zero-overhead, serverless AI architecture**:
+- **Zero Containers / Instant Cold Starts**: Executes on Cloudflare V8 worker isolates across global points of presence (<15ms routing).
+- **Two-Stage Precision Retrieval**: Vector approximate nearest neighbors (ANN) retrieval via **Vectorize**, followed by cross-encoder neural verification via **Workers AI BGE-Reranker**.
+- **Hierarchical Semantic Boundary Chunking**: Section-boundary parsing that keeps atomic logical units intact with injected contextual breadcrumbs.
+- **Cross-Language Semantic Bridge**: Normalizes Arabic queries into dense English vector targets on the edge before retrieval, ensuring zero semantic drift against English corpora.
+- **Resilient Fallback Inference**: Multi-tier model failover chain guarding against rate limits and transient cloud provider throttles.
 
 ---
 
-## 🏗️ End-to-End System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
     subgraph Ingestion["1. Offline Semantic Ingestion Engine (Python)"]
         PDFs["Curated Career Playbooks (*.pdf)"]
         Parser["pypdf Text Extraction & Unicode Normalization"]
-        Chunker["Hierarchical Semantic Boundary Chunker\n• Heading Detection\n• Sub-chunking (40-290 words)\n• Contextual Header Injection"]
+        Chunker["Hierarchical Semantic Boundary Chunker\n- Heading Detection\n- Sub-chunking (40-290 words)\n- Contextual Header Injection"]
         BGE_Embed["Workers AI: @cf/baai/bge-base-en-v1.5\n(768-dim dense vectors)"]
         Upsert_Vec["Upsert into Cloudflare Vectorize\n(rag-pdf-index)"]
         Insert_D1["Batch INSERT into Cloudflare D1\n(rag-pdf-db: chunks table)"]
@@ -76,7 +76,7 @@ flowchart TD
 
 ---
 
-## 🔬 Core Engineering Innovations
+## Core Engineering Decisions
 
 ### 1. Hierarchical Semantic Chunking vs. Naive Fixed Windows
 
@@ -102,14 +102,14 @@ chunk_text = header_prefix + body_text
 2. **Stage 2 (Cross-Encoder - Neural Verification & Reranking)**:
    - Model: `@cf/baai/bge-reranker-base`.
    - Passes the `(query, candidate_text)` pairs jointly through the attention layers of the reranker.
-   - Cross-attends words in query to words in document text, assigning actual relevance probabilities (tested between **92% to 99.7%** on domain queries).
+   - Cross-attends query terms with document context, assigning calibrated relevance probabilities (scoring between **0.92 to 0.997** on domain queries).
    - Filters out semantic noise and passes only `Top-N = 4` verified chunks to the LLM.
 
-### 3. Cross-Language Intent Bridge (Arabic ⇄ English Corpus)
+### 3. Cross-Language Intent Bridge (Arabic / English Corpus)
 
-When users ask questions in Egyptian or Modern Standard Arabic (e.g., `"إزاي أعمل سيرة ذاتية تعدي من الـ ATS؟"`), multilingual vector models often experience cosine drift when matching against technical English texts.
+When users submit questions in Arabic, multilingual vector embeddings often suffer from cross-lingual cosine drift when matched against English technical texts.
 
-- Masar AI runs a lightweight, deterministic Chat API step on Workers AI:
+- Masar AI executes a deterministic intent normalization step on Workers AI:
   ```json
   [
     {"role": "system", "content": "You are a bilingual RAG query translator. Output ONLY the concise English search query keywords. Do not explain."},
@@ -117,11 +117,11 @@ When users ask questions in Egyptian or Modern Standard Arabic (e.g., `"إزاي
   ]
   ```
 - **Output:** `"ATS friendly resume formatting keywords parsing best practices"`
-- The resulting vector lands dead-center in the target semantic cluster, achieving **100% retrieval recall**, while the generation stage preserves the user's language and persona.
+- The resulting vector aligns accurately with the English corpus clusters, maintaining high retrieval precision while the synthesis stage responds in the user's selected language.
 
-### 4. Zero-Cost High-Availability Fallback Chain
+### 4. High-Availability LLM Fallback Chain
 
-Serverless AI endpoints can encounter transient 429 rate limits or regional capacity locks. Rather than failing the request, the worker implements an asynchronous fallback sequence:
+Serverless AI endpoints can encounter transient rate limits or regional capacity constraints. The worker implements an automated failover waterfall:
 
 ```javascript
 const LLM_MODELS_FALLBACK_CHAIN = [
@@ -134,9 +134,9 @@ const LLM_MODELS_FALLBACK_CHAIN = [
 
 ---
 
-## ⚡ Latency & Cost Breakdown
+## Latency and Cost Breakdown
 
-| Pipeline Stage | Technology | Time / Latency | Monthly Cost |
+| Pipeline Stage | Technology | Latency | Monthly Cost |
 | :--- | :--- | :--- | :--- |
 | **Edge Routing & CORS** | Cloudflare Workers (V8 Isolate) | ~5ms | $0.00 (100k req/day free) |
 | **Query Embedding** | Workers AI (`bge-base-en-v1.5`) | ~35ms | $0.00 (10k neurons/day free) |
@@ -148,7 +148,7 @@ const LLM_MODELS_FALLBACK_CHAIN = [
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 career-rag-assistant/
@@ -169,23 +169,23 @@ career-rag-assistant/
 │   ├── wrangler.jsonc          # Cloudflare resource bindings (AI, Vectorize, D1)
 │   └── package.json            # Wrangler tooling
 ├── frontend/                   # Client interface deployed to Cloudflare Pages
-│   ├── index.html              # Modern glassmorphism UI & persona controls
-│   ├── style.css               # Luxury dark-mode design system & animations
+│   ├── index.html              # Clean glassmorphism UI & persona controls
+│   ├── style.css               # Design system & animations
 │   ├── script.js               # Streaming chat client & state synchronization
 │   └── assets/                 # 3D personas & emblem brand assets
-├── RAG_ARCHITECTURE.md         # Deep-dive technical whitepaper & design specifications
-├── .gitignore                  # Bulletproof security shielding (keys, env, wrangler)
+├── RAG_ARCHITECTURE.md         # Technical whitepaper & design specifications
+├── .gitignore                  # Security shielding (keys, env, wrangler)
 ├── LICENSE                     # MIT License
 └── README.md                   # Repository documentation
 ```
 
 ---
 
-## 🚀 Quickstart & Reproduction Guide
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ and Python 3.10+
-- Free Cloudflare Account (No payment method required)
+- Cloudflare Account (Workers, Vectorize, D1, Pages)
 
 ### Step 1: Cloudflare Edge Worker Setup
 ```powershell
@@ -235,16 +235,16 @@ Indexing complete in 4.2s.
 
 ---
 
-## 🛡️ Security & Zero-Secret Guarantee
+## Security and Secrets Management
 
-This repository enforces strict security protocols:
-- **Zero API Keys in Source Code**: All tokens are resolved either via Cloudflare runtime environment bindings (`env.AI`, `env.VECTOR_INDEX`, `env.DB`) or via git-ignored local `.env` files.
-- **Strict `.gitignore` Policy**: Excludes `.env`, `.wrangler/`, build caches, and private tokens.
+This repository adheres to strict security practices:
+- **Zero API Keys in Source Code**: All tokens are resolved via Cloudflare runtime environment bindings (`env.AI`, `env.VECTOR_INDEX`, `env.DB`) or via git-ignored local `.env` files.
+- **Strict Gitignore Rules**: Excludes `.env`, `.wrangler/`, build caches, and private tokens.
 - **Read-Only Public Surface**: The public client communicates only with the `/chat` endpoint of the Worker, with no direct access to D1 or Vectorize credentials.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Yasmen Aiman**
 - GitHub: [@yasmenaiman](https://github.com/yasmenaiman)
@@ -252,5 +252,5 @@ This repository enforces strict security protocols:
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the [MIT License](LICENSE).

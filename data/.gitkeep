@@ -1,0 +1,2 @@
+Put your source PDF files in this folder before running ingestion/ingest.py.
+This folder is only read locally during ingestion — it is never deployed.

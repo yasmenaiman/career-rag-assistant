@@ -1,0 +1,30 @@
+{
+  // Cloudflare Worker configuration for Masar AI (مسار)
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rag-pdf-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": [],
+
+  // Workers AI binding
+  "ai": {
+    "binding": "AI"
+  },
+
+  // Vectorize binding
+  "vectorize": [
+    {
+      "binding": "VECTOR_INDEX",
+      "index_name": "rag-pdf-index"
+    }
+  ],
+
+  // D1 binding
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rag-pdf-db",
+      "database_id": "8093e5a3-cf6d-4e05-8cf7-577e01e2f806"
+    }
+  ]
+}

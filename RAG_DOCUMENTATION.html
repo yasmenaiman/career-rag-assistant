@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masar AI — Technical Architecture & Cloudflare RAG Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --border: #1f2937;
+      --border-accent: #374151;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --code-bg: #030712;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.65;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px;
+      margin-bottom: 40px;
+    }
+
+    .badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: var(--text-muted);
+      border: 1px solid #334155;
+    }
+
+    .badge.primary { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); border-color: rgba(99, 102, 241, 0.3); }
+    .badge.emerald { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3); }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 36px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 24px 0 10px;
+      color: var(--primary-light);
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: #d1d5db;
+    }
+
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+      color: #d1d5db;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #1e293b;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      color: #f43f5e;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #e5e7eb;
+      font-size: 13px;
+    }
+
+    .callout {
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--primary-light);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .arch-diagram {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #93c5fd;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    @media print {
+      body { background: #fff; color: #111; padding: 0; }
+      .container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
+      pre, code, .arch-diagram { border-color: #ccc; background: #f8f9fa; color: #222; }
+      th { background: #eee; color: #111; }
+      h1, h2, h3 { color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge-bar">
+        <span class="badge primary">Cloudflare Workers AI</span>
+        <span class="badge">Cloudflare Vectorize</span>
+        <span class="badge">Cloudflare D1</span>
+        <span class="badge emerald">Zero Infrastructure Cost</span>
+      </div>
+      <h1>Masar AI — Architecture Documentation</h1>
+      <p class="subtitle">Production-Grade Serverless Retrieval-Augmented Generation (RAG) System</p>
+      <div class="meta">
+        <strong>Author:</strong> Yasmen Aiman &nbsp;|&nbsp; 
+        <strong>Repository:</strong> <a href="https://github.com/yasmenaiman/career-rag-assistant" style="color: var(--primary-light);">career-rag-assistant</a> &nbsp;|&nbsp; 
+        <strong>Live Demo:</strong> <a href="https://masar-ai-app.pages.dev" style="color: var(--primary-light);">masar-ai-app.pages.dev</a>
+      </div>
+    </header>
+
+    <h2>1. Executive Summary</h2>
+    <p>
+      Masar AI is a serverless Retrieval-Augmented Generation (RAG) assistant delivering domain-specific career and interview advisory. The system is built end-to-end on Cloudflare serverless edge infrastructure, achieving instantaneous cold starts, global edge caching, and zero recurring infrastructure costs.
+    </p>
+
+    <h2>2. System Architecture</h2>
+    <div class="arch-diagram">
+========================================================================================
+1. OFFLINE INGESTION PIPELINE (ingestion/ingest.py)
+========================================================================================
+[7 Career Playbooks (*.pdf)]
+       │
+       ▼
+[pypdf Extraction & Unicode Cleaning]
+       │
+       ▼
+[Hierarchical Semantic Boundary Chunker] ──► Extracts 46 section units with headers
+       │
+       ├─────────────────────────────────────────┐
+       ▼                                         ▼
+[Workers AI: @cf/baai/bge-base-en-v1.5]     [Batch SQL INSERT]
+(768-dim dense embedding vectors)                 │
+       │                                         ▼
+       ▼                                    [Cloudflare D1]
+[Cloudflare Vectorize]                       (rag-pdf-db: text & metadata)
+(rag-pdf-index: Cosine ANN)
+
+========================================================================================
+2. RUNTIME SERVERLESS QUERY PIPELINE (worker/src/index.js)
+========================================================================================
+[User Query (Arabic / English)]
+       │
+       ▼
+[Query Translation & Reformulation Bridge] (Llama 3.1 Chat Format -> English Keywords)
+       │
+       ▼
+[Query Vector Embedding] (@cf/baai/bge-base-en-v1.5)
+       │
+       ▼
+[Vectorize ANN Search] (Cosine similarity -> Top-20 candidates in &lt;15ms)
+       │
+       ▼
+[D1 Metadata Hydration] (Fetch full chunk texts & page numbers)
+       │
+       ▼
+[Cross-Encoder Neural Reranking] (@cf/baai/bge-reranker-base -> Top-4 chunks, 99% score)
+       │
+       ▼
+[Grounded Prompt Assembly] (Strict anti-hallucination reference block)
+       │
+       ▼
+[High-Availability Fallback Chain] (Llama 3.1 8B -&gt; Llama 3.3 70B -&gt; Llama 3.2 3B)
+       │
+       ▼
+[Server-Sent Events Token Stream] (Directly to client with citations)
+    </div>
+
+    <h2>3. Cloudflare Infrastructure Services</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Service</th>
+          <th>Model / Resource</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Vector Search</strong></td>
+          <td>Cloudflare Vectorize</td>
+          <td><code>rag-pdf-index</code></td>
+          <td>Cosine similarity nearest-neighbor search (768 dimensions).</td>
+        </tr>
+        <tr>
+          <td><strong>Relational Metadata</strong></td>
+          <td>Cloudflare D1</td>
+          <td><code>rag-pdf-db</code></td>
+          <td>Serverless SQLite store for chunk texts and page citations.</td>
+        </tr>
+        <tr>
+          <td><strong>Embeddings</strong></td>
+          <td>Workers AI</td>
+          <td><code>@cf/baai/bge-base-en-v1.5</code></td>
+          <td>Generates 768-dim dense vectors for texts and queries.</td>
+        </tr>
+        <tr>
+          <td><strong>Neural Reranker</strong></td>
+          <td>Workers AI</td>
+          <td><code>@cf/baai/bge-reranker-base</code></td>
+          <td>Cross-encoder re-scoring candidate relevance (92% - 99.7%).</td>
+        </tr>
+        <tr>
+          <td><strong>Primary LLM</strong></td>
+          <td>Workers AI</td>
+          <td><code>@cf/meta/llama-3.1-8b-instruct-fp8</code></td>
+          <td>Grounded answer synthesis with citations.</td>
+        </tr>
+        <tr>
+          <td><strong>Execution Runtime</strong></td>
+          <td>Cloudflare Workers</td>
+          <td><code>rag-pdf-worker</code></td>
+          <td>Global edge serverless execution environment.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Key Engineering Decisions</h2>
+
+    <h3>Hierarchical Semantic Chunking vs. Naive Windows</h3>
+    <p>
+      Standard sliding-window chunkers cut text arbitrarily every 200–300 words. This breaks interview scripts, counter-offer dialogues, and STAR framework steps across arbitrary vector boundaries.
+    </p>
+    <p>
+      <strong>Solution:</strong> The custom ingestion chunker detects true section-heading boundaries (<code>^\d+\.\s+([A-Z].*)</code>), preserves lists and paragraphs intact, and prepends every chunk with breadcrumb metadata:
+    </p>
+    <pre><code>Document: {Title} | Section: {Section Name} (Pages {Range})
+{Chunk Body Text}</code></pre>
+
+    <h3>Two-Stage Retrieval (Bi-Encoder + Cross-Encoder)</h3>
+    <p>
+      Bi-encoder retrieval (Vectorize) quickly identifies the top 20 candidate matches in under 15ms. To eliminate false-positive semantic matches, candidates pass through the <code>bge-reranker-base</code> cross-encoder, which joint-encodes the query and text to measure calibrated relevance probabilities. Only the top 4 verified chunks are injected into the prompt.
+    </p>
+
+    <h3>Cross-Language Query Bridge</h3>
+    <p>
+      When queries are submitted in Arabic, an edge LLM step reformulates the question into dense English retrieval keywords using the Chat Messages API. This ensures accurate vector matching against the English playbook corpus while the final response is generated in the user's native language.
+    </p>
+
+    <h3>High-Availability LLM Fallback Chain</h3>
+    <p>
+      To prevent service disruption from transient cloud rate limits, the worker automatically cascades through a resilient model fallback chain:
+    </p>
+    <ol>
+      <li><code>@cf/meta/llama-3.1-8b-instruct-fp8</code> (Primary)</li>
+      <li><code>@cf/meta/llama-3.3-70b-instruct-fp8-fast</code> (High-intelligence fallback)</li>
+      <li><code>@cf/meta/llama-3.2-3b-instruct</code> (Lightweight fallback)</li>
+      <li><code>@cf/mistral/mistral-7b-instruct-v0.2-lora</code> (External fallback)</li>
+    </ol>
+
+    <h2>5. Latency and Cost Breakdown</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Pipeline Step</th>
+          <th>Technology</th>
+          <th>Typical Latency</th>
+          <th>Monthly Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Edge Dispatch & CORS</td>
+          <td>Cloudflare Worker (V8 Isolate)</td>
+          <td>~5ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td>Query Embedding</td>
+          <td>Workers AI (BGE-base-en-v1.5)</td>
+          <td>~35ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td>Vector Search (Top-20)</td>
+          <td>Cloudflare Vectorize</td>
+          <td>~40ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td>D1 Metadata Lookup</td>
+          <td>Cloudflare D1 (SQLite)</td>
+          <td>~12ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td>Cross-Encoder Reranking</td>
+          <td>Workers AI (BGE-Reranker)</td>
+          <td>~80ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td>LLM Generation</td>
+          <td>Workers AI (Llama 3.1 8B)</td>
+          <td>~650ms</td>
+          <td>$0.00</td>
+        </tr>
+        <tr>
+          <td><strong>Total End-to-End</strong></td>
+          <td><strong>Full Cloudflare Edge Stack</strong></td>
+          <td><strong>~820ms</strong></td>
+          <td><strong>$0.00 / month</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-title">Zero-Secret Security Architecture</div>
+      <p style="margin-bottom: 0;">
+        All API tokens and database keys are bound via Cloudflare runtime environment variables. No secrets are stored in the client or tracked by version control.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

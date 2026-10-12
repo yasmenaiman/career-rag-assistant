@@ -55,6 +55,8 @@ const DICTIONARY = {
     p6_p: "Deconstruct requirements, separate must-haves from nice-to-haves, and align proof points directly to interviewer criteria.",
     status_online: "ACTIVE • 7 PLAYBOOKS GROUNDED",
     clear_btn: "Reset Session",
+    brand_sub: "Career Intelligence Mentor",
+    tag_grounded: "100% STRICT GROUNDING",
     persona_label: "Avatar:",
     persona_female: "Female",
     persona_male: "Male",
@@ -115,7 +117,9 @@ const DICTIONARY = {
     p6_h: "تحليل متطلبات الوظائف (JD Analysis)",
     p6_p: "استخراج الكلمات المفتاحية الأساسية وربطها بنقاط قوتك في الـ CV والإنترفيو.",
     status_online: "متصل • موثق بـ 7 أدلة مهنية",
-    clear_btn: "مسح المحادثة",
+    clear_btn: "بدء جلسة جديدة",
+    brand_sub: "المرشد المهني والوظيفي الذكي",
+    tag_grounded: "100% موثق بالأدلة المعتمدة",
     persona_label: "الأفاتار:",
     persona_female: "أنثى",
     persona_male: "ذكر",
@@ -232,8 +236,9 @@ function setupEventListeners() {
     });
   });
 
-  // Role Explorer Action Button
-  explorerSubmitBtn.addEventListener("click", () => {
+  // Role Explorer Action Button (if present)
+  explorerSubmitBtn?.addEventListener("click", () => {
+    if (!roleSelect || !focusSelect) return;
     const role = roleSelect.value;
     const focusText = focusSelect.options[focusSelect.selectedIndex].text;
 

@@ -87,7 +87,7 @@ html[dir="rtl"] body {
 body.app-mode {
   background-color: #0b1a12;
   background-image: 
-    linear-gradient(rgba(10, 22, 15, 0.40), rgba(6, 14, 10, 0.60)),
+    linear-gradient(rgba(8, 20, 14, 0.26), rgba(6, 14, 10, 0.46)),
     url('assets/career_chat_bg.png');
   background-repeat: no-repeat;
   background-position: center center;
@@ -98,6 +98,13 @@ body.app-mode {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+body.app-mode .site-header {
+  background: rgba(11, 26, 18, 0.38) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border-bottom: 1px solid rgba(238, 222, 197, 0.16) !important;
 }
 
 .brand-text-wrap {
@@ -151,15 +158,25 @@ body.app-mode {
 .app-coach-section .coach-container {
   height: 100% !important;
   max-height: 100% !important;
-  background: rgba(14, 32, 23, 0.78) !important;
-  backdrop-filter: blur(28px) !important;
-  -webkit-backdrop-filter: blur(28px) !important;
-  border: 1px solid rgba(238, 222, 197, 0.22) !important;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(238, 222, 197, 0.08) !important;
+  background: rgba(14, 34, 24, 0.38) !important;
+  backdrop-filter: blur(26px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(160%) !important;
+  border: 1.5px solid rgba(238, 222, 197, 0.28) !important;
+  border-radius: 28px !important;
+  box-shadow: 
+    0 24px 64px -12px rgba(0, 0, 0, 0.65), 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 45px rgba(238, 222, 197, 0.08) !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.app-coach-section .coach-header-bar {
+  background: rgba(10, 24, 17, 0.32) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(238, 222, 197, 0.16) !important;
 }
 
 .app-coach-section .chat-log {
@@ -235,15 +252,15 @@ body.app-mode {
   align-items: center;
   gap: 14px;
   padding: 16px 18px;
-  background: rgba(20, 48, 33, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(238, 222, 197, 0.22);
-  border-radius: 18px;
+  background: rgba(22, 52, 36, 0.38);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(238, 222, 197, 0.24);
+  border-radius: 20px;
   cursor: pointer;
   text-align: left;
   transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.16);
 }
 
 html[dir="rtl"] .hero-action-card {
@@ -251,18 +268,18 @@ html[dir="rtl"] .hero-action-card {
 }
 
 .hero-action-card:hover {
-  background: rgba(28, 65, 45, 0.75);
-  border-color: rgba(238, 222, 197, 0.55);
+  background: rgba(30, 72, 50, 0.62);
+  border-color: rgba(238, 222, 197, 0.58);
   transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(238, 222, 197, 0.16);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 0 24px rgba(238, 222, 197, 0.2);
 }
 
 .card-icon-box {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(238, 222, 197, 0.22) 0%, rgba(29, 73, 46, 0.65) 100%);
-  border: 1px solid rgba(238, 222, 197, 0.35);
+  background: linear-gradient(135deg, rgba(238, 222, 197, 0.25) 0%, rgba(29, 73, 46, 0.7) 100%);
+  border: 1px solid rgba(238, 222, 197, 0.38);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,17 +315,18 @@ html[dir="rtl"] .hero-action-card {
 /* Floating Pill Input Bar Styling */
 .app-coach-section .input-card {
   padding: 14px 24px 14px;
-  background: rgba(10, 24, 17, 0.65);
-  border-top: 1px solid rgba(238, 222, 197, 0.12);
-  backdrop-filter: blur(20px);
+  background: rgba(9, 22, 15, 0.36) !important;
+  border-top: 1px solid rgba(238, 222, 197, 0.14) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
 
 .app-coach-section .chat-form {
   border-radius: 999px;
   padding: 6px 8px 6px 20px;
-  background: rgba(7, 18, 13, 0.88);
-  border: 1px solid rgba(238, 222, 197, 0.25);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  background: rgba(8, 20, 14, 0.62);
+  border: 1px solid rgba(238, 222, 197, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -320,8 +338,9 @@ html[dir="rtl"] .app-coach-section .chat-form {
 }
 
 .app-coach-section .chat-form:focus-within {
-  border-color: rgba(238, 222, 197, 0.6);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 20px rgba(238, 222, 197, 0.15);
+  border-color: rgba(238, 222, 197, 0.65);
+  background: rgba(8, 20, 14, 0.78);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(238, 222, 197, 0.2);
 }
 
 .app-coach-section .btn-send {
@@ -343,6 +362,23 @@ html[dir="rtl"] .app-coach-section .chat-form {
 .app-coach-section .btn-send:hover:not(:disabled) {
   transform: scale(1.06);
   filter: brightness(1.08);
+}
+
+/* Chat bubble translucent glass in app mode */
+.app-coach-section .message.assistant .bubble {
+  background: rgba(18, 44, 30, 0.62);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(238, 222, 197, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.app-coach-section .message.user .bubble {
+  background: rgba(30, 72, 48, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(188, 240, 104, 0.32);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .send-svg {
@@ -1252,11 +1288,36 @@ html[dir="rtl"] .metric-item:not(:last-child)::after {
 }
 
 .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--lime-accent);
+  letter-spacing: 0.08em;
+  color: #34d399;
+}
+
+.status-badge::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+  animation: pulseGreenBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseGreenBadge {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
 

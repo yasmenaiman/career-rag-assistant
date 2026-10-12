@@ -63,7 +63,7 @@
   <main class="platform-layout app-layout">
     <section id="coach-section" class="coach-section app-coach-section">
       <div class="coach-container">
-        <!-- Coach Header Bar -->
+        <!-- Floating Glass Header Ribbon -->
         <div class="coach-header-bar">
           <div class="coach-identity">
             <img src="assets/masar_3d_emblem.png" alt="Masar AI" class="coach-bar-icon" />
@@ -80,32 +80,91 @@
 
         <!-- Chat History Log -->
         <div id="chat-log" class="chat-log">
-          <!-- Initial Welcome Card from Masar AI -->
-          <div class="message assistant welcome-card">
-            <div class="msg-avatar assistant-avatar">
-              <img src="assets/masar_3d_emblem.png" alt="M" class="avatar-img assistant-avatar-img" />
+          <!-- Initial Zero-State Hero Cards Container -->
+          <div id="welcome-hero" class="welcome-hero">
+            <div class="welcome-hero-header">
+              <div class="emblem-gold-lockup">MASAR AI</div>
+              <h1 class="welcome-headline" data-i18n="welcome_prompt_main">Where should we elevate your career today?</h1>
+              <p class="welcome-sub" data-i18n="welcome_sub_main">Select a playbook domain below or type your question:</p>
             </div>
 
-            <div class="bubble">
-              <h4 class="welcome-heading" data-i18n="welcome_heading">I am Masar AI — Your Career & Interview Coach.</h4>
-              <p class="welcome-body" data-i18n="welcome_body">
-                I am here to guide you across ATS resume preparation, structured behavioral interviews (STAR framework), technical interview principles, salary negotiation playbooks, and modern data roadmaps.
-              </p>
-              <p class="welcome-prompt-line" data-i18n="welcome_prompt">Select a quick prompt below or type your question:</p>
+            <!-- 2x2 Glass Action Cards Grid -->
+            <div class="hero-cards-grid">
+              <!-- Card 1: ATS Resume -->
+              <button type="button" class="hero-action-card" data-topic="cv"
+                      data-query-en="How can I format and write high-impact resume bullet points that pass ATS filters?"
+                      data-query-ar="إزاي أصيغ إنجازاتي في السيرة الذاتية بطريقة احترافية تجتاز فحص أنظمة الـ ATS؟">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <div class="card-text-box">
+                  <h3 class="card-title" data-i18n="card_cv_title">ATS Resume Optimization</h3>
+                  <p class="card-desc" data-i18n="card_cv_desc">Quantified impact formulas & keyword matching</p>
+                </div>
+              </button>
+
+              <!-- Card 2: STAR Interview -->
+              <button type="button" class="hero-action-card" data-topic="star"
+                      data-query-en="Explain the STAR method for behavioral interviews with a strong real-world example."
+                      data-query-ar="اشرحلي طريقة STAR للإجابة على الأسئلة السلوكية في المقابلة مع مثال عملي.">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-svg">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    <polygon points="12 8 13.2 10.5 16 10.9 14 12.8 14.5 15.5 12 14.2 9.5 15.5 10 12.8 8 10.9 10.8 10.5 12 8"></polygon>
+                  </svg>
+                </div>
+                <div class="card-text-box">
+                  <h3 class="card-title" data-i18n="card_star_title">STAR Behavioral Interviews</h3>
+                  <p class="card-desc" data-i18n="card_star_desc">Frameworks, storytelling & situational drills</p>
+                </div>
+              </button>
+
+              <!-- Card 3: Salary Negotiation -->
+              <button type="button" class="hero-action-card" data-topic="salary"
+                      data-query-en="What are the most effective strategies and steps to negotiate a salary offer?"
+                      data-query-ar="ما هي خطوات واستراتيجيات التفاوض على الراتب عند تلقي عرض وظيفي؟">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-svg">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    <circle cx="12" cy="14" r="2"></circle>
+                  </svg>
+                </div>
+                <div class="card-text-box">
+                  <h3 class="card-title" data-i18n="card_salary_title">Salary Negotiation Playbook</h3>
+                  <p class="card-desc" data-i18n="card_salary_desc">Market benchmarking & counter-offer scripts</p>
+                </div>
+              </button>
+
+              <!-- Card 4: Data Career Roadmaps -->
+              <button type="button" class="hero-action-card" data-topic="data"
+                      data-query-en="What is the key difference between a Data Analyst and Data Engineer roadmap and tools?"
+                      data-query-ar="ما الفرق بين مسار Data Analyst ومسار Data Engineer وما هي المهارات المطلوبة؟">
+                <div class="card-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="card-svg">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                </div>
+                <div class="card-text-box">
+                  <h3 class="card-title" data-i18n="card_data_title">Data Career Roadmaps</h3>
+                  <p class="card-desc" data-i18n="card_data_desc">Analyst vs. Engineer vs. Scientist progression</p>
+                </div>
+              </button>
             </div>
           </div>
-        </div>
-
-        <!-- Suggestion Chips -->
-        <div class="chips-container">
-          <span class="chips-label" data-i18n="chips_label">PROMPTS:</span>
-          <div id="suggested-questions" class="suggested-questions"></div>
         </div>
 
         <!-- Error Banner -->
         <div id="error-banner" class="error-banner hidden"></div>
 
-        <!-- Input Box -->
+        <!-- Floating Pill Input Container -->
         <div class="input-card">
           <form id="chat-form" class="chat-form">
             <textarea
@@ -116,7 +175,10 @@
               maxlength="1000"
             ></textarea>
             <button type="submit" id="send-button" class="btn-send" aria-label="Send question">
-              <span class="arrow-diag">↗</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="send-svg">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
             </button>
           </form>
           <div class="input-meta">

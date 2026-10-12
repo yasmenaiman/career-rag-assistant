@@ -57,6 +57,16 @@ const DICTIONARY = {
     clear_btn: "Reset Session",
     brand_sub: "Career Intelligence Mentor",
     tag_grounded: "100% STRICT GROUNDING",
+    welcome_prompt_main: "Where should we elevate your career today?",
+    welcome_sub_main: "Select a playbook domain below or type your question:",
+    card_cv_title: "ATS Resume Optimization",
+    card_cv_desc: "Quantified impact formulas & keyword matching",
+    card_star_title: "STAR Behavioral Interviews",
+    card_star_desc: "Frameworks, storytelling & situational drills",
+    card_salary_title: "Salary Negotiation Playbook",
+    card_salary_desc: "Market benchmarking & counter-offer scripts",
+    card_data_title: "Data Career Roadmaps",
+    card_data_desc: "Analyst vs. Engineer vs. Scientist progression",
     persona_label: "Avatar:",
     persona_female: "Female",
     persona_male: "Male",
@@ -120,6 +130,16 @@ const DICTIONARY = {
     clear_btn: "بدء جلسة جديدة",
     brand_sub: "المرشد المهني والوظيفي الذكي",
     tag_grounded: "100% موثق بالأدلة المعتمدة",
+    welcome_prompt_main: "كيف نبدأ بتطوير مسارك المهني اليوم؟",
+    welcome_sub_main: "اختر أحد مجالات التحضير المعتمدة أدناه أو اكتب سؤالك مباشرة:",
+    card_cv_title: "صياغة السيرة الذاتية (ATS)",
+    card_cv_desc: "صياغة الإنجازات بلغة الأرقام وتخطي الفرز الآلي",
+    card_star_title: "المقابلات السلوكية (STAR)",
+    card_star_desc: "إتقان هيكل STAR والإجابة بثقة على المواقف",
+    card_salary_title: "دليل التفاوض على الراتب",
+    card_salary_desc: "تقييم العرض الوظيفي وصياغة عروض الرد المضادة",
+    card_data_title: "مسارات وظائف البيانات",
+    card_data_desc: "مقارنة المهارات بين Analyst و Engineer و Scientist",
     persona_label: "الأفاتار:",
     persona_female: "أنثى",
     persona_male: "ذكر",
@@ -221,19 +241,17 @@ function setupEventListeners() {
   });
 
 
-  // Clickable 3D Mosaic & Pillar Cards
-  const interactiveCards = document.querySelectorAll(".mosaic-card, .pillar-card");
-  interactiveCards.forEach((card) => {
-    card.addEventListener("click", (e) => {
-      // Don't duplicate if clicking an explicit button inside
-      const promptAttr = currentLang === "ar" ? "data-prompt-ar" : "data-prompt-en";
-      const prompt = card.getAttribute(promptAttr) || card.getAttribute("data-prompt-en");
-      if (prompt) {
-        questionInput.value = prompt;
-        scrollToCoach();
+  // Clickable 2x2 Hero Action Cards
+  chatLog?.addEventListener("click", (e) => {
+    const card = e.target.closest(".hero-action-card");
+    if (card) {
+      const queryAttr = currentLang === "ar" ? "data-query-ar" : "data-query-en";
+      const query = card.getAttribute(queryAttr) || card.getAttribute("data-query-en");
+      if (query) {
+        questionInput.value = query;
         handleSend();
       }
-    });
+    }
   });
 
   // Role Explorer Action Button (if present)
@@ -342,6 +360,10 @@ async function handleSend() {
   if (!text) return;
 
   hideError();
+  const welcomeHero = document.getElementById("welcome-hero");
+  if (welcomeHero) {
+    welcomeHero.style.display = "none";
+  }
   appendUserMessage(text);
   questionInput.value = "";
   questionInput.style.height = "auto";

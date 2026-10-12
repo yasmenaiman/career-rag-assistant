@@ -5,6 +5,7 @@
  * Core Capabilities:
  * - Multi-turn conversational memory (contextual follow-up understanding).
  * - Strict factual grounding (NO outside hallucination / guessing; strictly based on the 7 playbooks).
+ * - Out-of-domain detection and refusal (strictly prevents answering general trivia/outside topics).
  * - Contextual standalone query reformulation for accurate follow-up retrieval.
  * - Language matching (pure English on English prompts, pure Arabic on Arabic prompts).
  * - High-availability multi-model LLM fallback chain.
@@ -12,7 +13,7 @@
 
 const TOP_K_CANDIDATES = 20;
 const TOP_N_AFTER_RERANK = 4;
-const RELEVANCE_THRESHOLD = 0.03;
+const RELEVANCE_THRESHOLD = 0.20; // Calibrated relevance threshold for bge-reranker-base
 const MAX_QUESTION_LENGTH = 1000;
 const MAX_HISTORY_MESSAGES = 6;
 
@@ -195,6 +196,49 @@ function cleanQuery(query) {
     .trim();
 }
 
+function isGreetingOrSmallTalk(text) {
+  const t = text.trim().toLowerCase();
+
+  const arGreetings = [
+    /^(أهلا|اهلا|مرحبا|مرحباً|سلام|السلام عليكم|سلام عليكم|صباح الخير|مساء الخير|هاي|ازيك|إزيك|عامل ايه|كيف حالك|كيفك|شخبارك)/,
+    /^(شكرا|شكراً|تسلم|تسلمي|جزاك الله خيرا|يعطيك العافية|تمام|ماشي|أوك|اوك|ok|bye|مع السلامة|باي)$/,
+    /^(مين انت|من أنت|عرف نفسك|بتعمل ايه|إيه وظيفتك|وظيفتك ايه|عرفني بيك|انت مين)/
+  ];
+
+  const enGreetings = [
+    /^(hi|hello|hey|good morning|good afternoon|good evening|howdy|sup|greetings)\b/,
+    /^(how are you|how are you doing|who are you|what can you do|what is your name)\b/,
+    /^(thanks|thank you|thx|cool|awesome|great|ok|okay|bye|goodbye|see you)\b/
+  ];
+
+  return arGreetings.some((r) => r.test(t)) || enGreetings.some((r) => r.test(t));
+}
+
+function getGreetingResponse(isAr) {
+  if (isAr) {
+    return "أهلاً بك! أنا «مسار» (Masar AI)، مرشدك المهني الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية وفق معايير ATS، التحضير للمقابلات السلوكية والتقنية بمنهجية STAR، التفاوض على العروض الوظيفية، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
+  }
+  return "Hello! I am Masar AI, your precision career and interview mentor. I am here to help you navigate your professional journey grounded in our 7 verified playbooks—covering ATS resume optimization, behavioral & technical interviews, salary negotiation, and data career roadmaps. How can I assist you today?";
+}
+
+function getOutOfDomainResponse(isAr) {
+  if (isAr) {
+    return "عذراً، هذا الموضوع غير موجود في الأدلة المهنية المعتمدة المتاحة لدي. أنا مرشد مهني مخصص فقط لمساعدتك في موضوعات التطوير المهني والوظائف المذكورة في أدلتنا السبعة (كتابة السيرة الذاتية، تحليل الوظائف، المقابلات الشخصية، التفاوض على الرواتب، ومسارات تكنولوجيا البيانات). هل ترغب في سؤالي عن أي من هذه المجالات المهنية؟";
+  }
+  return "I apologize, but this topic is outside the scope of our verified career playbooks. I am strictly specialized in career guidance (resume writing, job description analysis, behavioral and technical interviews, salary negotiation, career growth, and data roles). How can I assist you with your career preparation?";
+}
+
+function createStaticStream(text) {
+  const encoder = new TextEncoder();
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ response: text })}\n\n`));
+      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+      controller.close();
+    },
+  });
+}
+
 /**
  * Resolves standalone search query taking prior conversation history into account.
  * Crucial for follow-up questions like "can you give me an example of this?" or "how about the second point?".
@@ -272,56 +316,53 @@ async function resolveSearchQuery(question, history, isAr, env) {
   return question;
 }
 
-
 /**
  * Builds the Master Unified System Prompt for Masar AI.
- * Enforces strict grounding, no outside hallucination, language consistency, and proportional dialogue.
+ * Enforces strict grounding, no outside hallucination, language consistency, and domain boundary protection.
  */
 function buildMasterSystemPrompt(isAr) {
   if (isAr) {
-    return `أنت "مَسار" (Masar AI) — مرشد مهني ومستشار مقابلات وظيفية ذكي، إيجابي، وموثوق.
+    return `أنت "مَسار" (Masar AI) — مرشد مهني ومستشار مقابلات وظيفية مبني حصراً على أدلة التطوير المهني السبعة المرفقة.
 
-قواعد الإرشاد والالتزام المعرفي الصارم:
-1. الالتزام الصارم بالحقائق والورق المعتمد (Strict Grounding — ممنوع الفتي تماماً):
-   - إجاباتك المهنية يجب أن تنبع حصراً من واقع الأدلة السبعة المعتمدة المرفقة (Career Playbooks).
-   - ممنوع اختلاق معلومات خارج الأدلة أو التخمين أو التأليف. قدم دائماً كلاماً واقعياً، منطقياً، ومفهوماً يعكس ما جاء في الأدلة المعتمدة.
-   - إذا سأل المستخدم عن جزئية غير موجودة في الأدلة المعتمدة، وضّح له بصراحة وبأسلوب احترافي أن هذه الجزئية غير مغطاة في أدلة التحضير الحالية، ولا تخترع شيئاً من عندك.
+قواعد الالتزام المعرفي الصارم (Strict Grounding — ممنوع الفتي والخروج عن النص تماماً):
+1. الالتزام الحصري بالأدلة المرفقة:
+   - إجاباتك المهنية يجب أن تنبع حصراً من نصوص "Career Playbook Reference Material" المرفقة في هذه الرسالة.
+   - يُحظر تماماً الإجابة عن أي أسئلة خارج نطاق هذه الأدلة أو من معلوماتك العامة المسبقة (مثل العلوم العامة، الدراسات الاجتماعية، التاريخ، الجغرافيا، الرياضة، السياسة، الطبخ، الفن، إلخ).
+   - إذا كان سؤال المستخدم لا يمكن الإجابة عليه حصراً من نصوص الأدلة المرفقة أعلاه، اعتذر بلطف وبيّن أن هذا الموضوع خارج نطاق أدلتك المهنية المعتمدة (السيرة الذاتية، المقابلات، تحليل الوظائف، التفاوض على الراتب، مسارات البيانات).
+   - لا تخترع أو تفترض أي إجابة من عندك إطلاقاً.
 
 2. استمرارية المحادثة والذاكرة التفاعلية (Conversational Memory):
    - تابع سياق الحوار السابق مع المستخدم بسلاسة؛ افهم الضمائر والإشارات (مثل "عايز مثال على ده"، "اشرحلي أكتر"، "طب إزاي أطبق النقطة التانية عملياً؟").
    - وسّع الشرح وبسّط المفاهيم اعتماداً على ما تم مناقشته وسياق الأدلة دون أن تجبر المستخدم على إعادة كتابة الكلمات المفتاحية.
    - لا تكرر نفسك ولا تعد تعريف نفسك في كل رسالة؛ تحدث معه كجلسة إرشاد مستمرة بين إنسان ومستشاره.
 
-3. فهم القصد والتناسب (Proportionality):
-   - إذا سلّم عليك أو سأل عن حالك: رد بلطف وإيجاز شديد في جملة أو جملتين فقط دون أي سرد تسويقي أو قوائم طويلة غير مطلوبة.
-   - إذا سأل سؤالاً مهنياً أو طلب توضيحاً: قدم إجابة منظمة، عملية، ومدعومة بالمصدر ورقم الصفحة.
+3. التوثيق والمصادر:
+   - اذكر دائماً اسم الدليل ورقم الصفحة عند تقديم النصائح المهنية (مثال: [Resume Writing Best Practices, Page 2]).
 
 4. اتساق اللغة:
    - تحدّث بلغة عربية فصحى طبيعية وسلسة دون أي تكلف.`;
   }
 
-  return `You are Masar AI — an experienced, empathetic, and sharp Career & Interview Mentor.
+  return `You are Masar AI — a precision Career & Interview Mentor strictly grounded in the 7 verified tech career playbooks.
 
-CORE CONVERSATIONAL & GROUNDING PRINCIPLES:
+STRICT GROUNDING & DOMAIN BOUNDARIES:
 1. Strict Grounding — Zero Hallucination:
-   - Ground all professional advice strictly in the verified Career Playbook Reference Materials provided below.
-   - Do NOT invent outside company policies, fake statistics, or unverified claims.
-   - If the user asks about something not covered in the playbooks, be honest and transparent: explain what the playbooks do say, and candidly state that this specific detail is not covered rather than guessing or fabricating.
+   - Ground all professional advice strictly and exclusively in the provided Career Playbook Reference Materials below.
+   - Do NOT answer questions outside the scope of these career playbooks using pre-trained general knowledge (e.g. social studies, history, science, geography, trivia, entertainment).
+   - If the user's question cannot be answered purely and directly from the provided Career Playbook Reference Material, you MUST refuse and state:
+     "I apologize, but this topic is outside the scope of the verified career playbooks. I am strictly specialized in career guidance (resume writing, job description analysis, interviews, salary negotiation, career growth, and data roles)."
+   - Zero tolerance for outside hallucination or unsupported claims.
 
 2. Conversational Memory & Multi-Turn Flow:
    - Track prior context naturally across the conversation (understand pronouns like "can you give an example of that?", "what about the second tip?", etc.).
    - Do NOT re-introduce yourself or repeat welcome greetings during ongoing discussions. Speak as an active human mentor in an ongoing session.
 
-3. Intent & Proportionality:
-   - If the user makes small talk or greets you: Respond warmly and CONCISELY in 1-2 friendly sentences. Never dump a massive unsolicited bulleted list.
-   - If the user asks a career question or follow-up: Provide a structured, actionable, and clear answer.
-
-4. Strict Language Consistency:
+3. Strict Language Consistency:
    - The user is speaking in English. You must respond 100% in natural, fluent English.
-   - NEVER insert Arabic words, Arabic transliterations (like "As-salamu alaykum" or "(مسار)"), or foreign phrases into an English conversation. Speak as a native English career coach.
+   - NEVER insert Arabic words or foreign phrases into an English conversation. Speak as a native English career coach.
 
-5. Evidence & Citations:
-   - When career references apply, cite the playbook name and page number naturally (e.g. [Salary Negotiation Playbook, p. 2]).`;
+4. Evidence & Citations:
+   - When career references apply, cite the playbook name and page number naturally (e.g. [Salary Negotiation Playbook, Page 2]).`;
 }
 
 async function answerQuestion(question, history, env, wantsStream = false) {
@@ -372,24 +413,38 @@ async function answerQuestion(question, history, env, wantsStream = false) {
     console.warn("RAG retrieval step encountered non-fatal error:", err);
   }
 
-  // 3. Build Grounded Context Block
-  let contextBlock = "";
-  if (rankedChunks.length > 0) {
-    contextBlock =
-      "Career Playbook Reference Material:\n\n" +
-      rankedChunks
-        .map(
-          (c, i) =>
-            `[Source ${i + 1}: ${formatDocName(c.document)}, Page ${c.page}]\n${c.text}`
-        )
-        .join("\n\n---\n\n") +
-      "\n\n";
+  // Guardrail 1: Strictly handle empty/irrelevant retrieval
+  if (rankedChunks.length === 0) {
+    if (isGreetingOrSmallTalk(cleanedQuestion)) {
+      const greeting = getGreetingResponse(isAr);
+      if (wantsStream) {
+        return { stream: createStaticStream(greeting), sources: [] };
+      }
+      return { answer: greeting, sources: [] };
+    }
+
+    // STRICT GROUNDING REFUSAL:
+    // Out-of-domain question (e.g., social studies, general trivia, unrelated inquiry)
+    const refusal = getOutOfDomainResponse(isAr);
+    if (wantsStream) {
+      return { stream: createStaticStream(refusal), sources: [] };
+    }
+    return { answer: refusal, sources: [] };
   }
 
+  // 3. Build Grounded Context Block
+  const contextBlock =
+    "Career Playbook Reference Material:\n\n" +
+    rankedChunks
+      .map(
+        (c, i) =>
+          `[Source ${i + 1}: ${formatDocName(c.document)}, Page ${c.page}]\n${c.text}`
+      )
+      .join("\n\n---\n\n") +
+    "\n\n";
+
   const systemPrompt = buildMasterSystemPrompt(isAr);
-  const currentTurnContent = contextBlock
-    ? `${contextBlock}User Question: ${cleanedQuestion}`
-    : cleanedQuestion;
+  const currentTurnContent = `${contextBlock}User Question: ${cleanedQuestion}`;
 
   // 4. Construct Multi-Turn Messages Array for LLM
   const messages = [{ role: "system", content: systemPrompt }];

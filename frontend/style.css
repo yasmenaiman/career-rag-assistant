@@ -87,7 +87,7 @@ html[dir="rtl"] body {
 body.app-mode {
   background-color: #0b1a12;
   background-image: 
-    linear-gradient(rgba(8, 20, 14, 0.20), rgba(6, 14, 10, 0.38)),
+    linear-gradient(rgba(10, 24, 16, 0.12), rgba(6, 14, 10, 0.28)),
     url('assets/career_chat_bg.png');
   background-repeat: no-repeat;
   background-position: center center;
@@ -101,11 +101,11 @@ body.app-mode {
 }
 
 body.app-mode .site-header {
-  background: rgba(12, 28, 20, 0.35) !important;
-  backdrop-filter: blur(28px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(238, 222, 197, 0.2) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  background: rgba(12, 28, 20, 0.40) !important;
+  backdrop-filter: blur(28px) saturate(170%) brightness(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(170%) brightness(105%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
 .brand-text-wrap {
@@ -159,25 +159,28 @@ body.app-mode .site-header {
 .app-coach-section .coach-container {
   height: 100% !important;
   max-height: 100% !important;
-  background: rgba(14, 34, 24, 0.32) !important;
-  backdrop-filter: blur(32px) saturate(170%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(170%) !important;
-  border: 1px solid rgba(238, 222, 197, 0.3) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 50%, rgba(14, 34, 24, 0.22) 100%) !important;
+  backdrop-filter: blur(28px) saturate(190%) brightness(108%) contrast(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(108%) contrast(105%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  border-top: 2px solid rgba(255, 255, 255, 0.5) !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.35) !important;
   border-radius: 30px !important;
   box-shadow: 
-    0 30px 70px -15px rgba(0, 0, 0, 0.7), 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.26),
-    0 0 50px rgba(238, 222, 197, 0.08) !important;
+    0 30px 70px -15px rgba(0, 0, 0, 0.65), 
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 25px 0 rgba(255, 255, 255, 0.06),
+    0 0 50px rgba(238, 222, 197, 0.14) !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .app-coach-section .coach-header-bar {
-  background: rgba(10, 24, 16, 0.35) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(238, 222, 197, 0.18) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
   padding: 16px 24px !important;
 }
 
@@ -257,15 +260,16 @@ body.app-mode .site-header {
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: rgba(22, 54, 38, 0.34);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(238, 222, 197, 0.24);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
+  backdrop-filter: blur(20px) saturate(160%) brightness(105%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(105%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.45) !important;
   border-radius: 20px;
   cursor: pointer;
   text-align: left;
   transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
 }
 
 html[dir="rtl"] .hero-action-card {
@@ -273,13 +277,13 @@ html[dir="rtl"] .hero-action-card {
 }
 
 .hero-action-card:hover {
-  background: rgba(32, 76, 52, 0.58);
-  border-color: rgba(238, 222, 197, 0.6);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+  border-color: rgba(238, 222, 197, 0.65) !important;
   transform: translateY(-3px) scale(1.01);
   box-shadow: 
-    0 18px 40px rgba(0, 0, 0, 0.45), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.3), 
-    0 0 25px rgba(238, 222, 197, 0.22);
+    0 18px 40px rgba(0, 0, 0, 0.4), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.5), 
+    0 0 25px rgba(238, 222, 197, 0.25) !important;
 }
 
 .card-icon-box {
@@ -327,23 +331,24 @@ html[dir="rtl"] .hero-action-card {
 
 /* Floating Pill Input Bar Styling */
 .app-coach-section .input-card {
-  padding: 14px 24px 14px;
-  background: rgba(9, 22, 15, 0.36) !important;
-  border-top: 1px solid rgba(238, 222, 197, 0.14) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  padding: 14px 24px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
 }
 
 .app-coach-section .chat-form {
   border-radius: 999px;
   padding: 6px 8px 6px 20px;
-  background: rgba(8, 20, 14, 0.62);
-  border: 1px solid rgba(238, 222, 197, 0.28);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(10, 24, 16, 0.65) 0%, rgba(6, 16, 11, 0.75) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 html[dir="rtl"] .app-coach-section .chat-form {
@@ -351,9 +356,9 @@ html[dir="rtl"] .app-coach-section .chat-form {
 }
 
 .app-coach-section .chat-form:focus-within {
-  border-color: rgba(238, 222, 197, 0.65);
-  background: rgba(8, 20, 14, 0.78);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(238, 222, 197, 0.2);
+  border-color: rgba(238, 222, 197, 0.7) !important;
+  background: linear-gradient(135deg, rgba(12, 28, 19, 0.82) 0%, rgba(8, 20, 14, 0.9) 100%) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(238, 222, 197, 0.25) !important;
 }
 
 .app-coach-section .btn-send {
@@ -2115,11 +2120,12 @@ body.app-mode {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    background: rgba(22, 54, 38, 0.38) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(238, 222, 197, 0.25) !important;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
     padding: 11px 14px !important;
     gap: 12px !important;
     border-radius: 16px !important;

@@ -87,7 +87,7 @@ html[dir="rtl"] body {
 body.app-mode {
   background-color: #0b1a12;
   background-image: 
-    linear-gradient(rgba(8, 20, 14, 0.26), rgba(6, 14, 10, 0.46)),
+    linear-gradient(rgba(8, 20, 14, 0.20), rgba(6, 14, 10, 0.38)),
     url('assets/career_chat_bg.png');
   background-repeat: no-repeat;
   background-position: center center;
@@ -101,10 +101,11 @@ body.app-mode {
 }
 
 body.app-mode .site-header {
-  background: rgba(11, 26, 18, 0.38) !important;
-  backdrop-filter: blur(24px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
-  border-bottom: 1px solid rgba(238, 222, 197, 0.16) !important;
+  background: rgba(12, 28, 20, 0.35) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(238, 222, 197, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
 .brand-text-wrap {
@@ -158,25 +159,26 @@ body.app-mode .site-header {
 .app-coach-section .coach-container {
   height: 100% !important;
   max-height: 100% !important;
-  background: rgba(14, 34, 24, 0.38) !important;
-  backdrop-filter: blur(26px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(160%) !important;
-  border: 1.5px solid rgba(238, 222, 197, 0.28) !important;
-  border-radius: 28px !important;
+  background: rgba(14, 34, 24, 0.32) !important;
+  backdrop-filter: blur(32px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(170%) !important;
+  border: 1px solid rgba(238, 222, 197, 0.3) !important;
+  border-radius: 30px !important;
   box-shadow: 
-    0 24px 64px -12px rgba(0, 0, 0, 0.65), 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.22),
-    0 0 45px rgba(238, 222, 197, 0.08) !important;
+    0 30px 70px -15px rgba(0, 0, 0, 0.7), 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.26),
+    0 0 50px rgba(238, 222, 197, 0.08) !important;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .app-coach-section .coach-header-bar {
-  background: rgba(10, 24, 17, 0.32) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-bottom: 1px solid rgba(238, 222, 197, 0.16) !important;
+  background: rgba(10, 24, 16, 0.35) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(238, 222, 197, 0.18) !important;
+  padding: 16px 24px !important;
 }
 
 .app-coach-section .chat-log {
@@ -223,12 +225,15 @@ body.app-mode .site-header {
 }
 
 .welcome-headline {
-  font-size: 1.85rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.1rem;
   font-weight: 800;
-  color: #ffffff;
-  margin: 6px 0 8px;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 0%, #faefe0 40%, #eedec5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+  margin: 6px 0 10px;
 }
 
 .welcome-sub {
@@ -250,17 +255,17 @@ body.app-mode .site-header {
 .hero-action-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  background: rgba(22, 52, 36, 0.38);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(22, 54, 38, 0.34);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid rgba(238, 222, 197, 0.24);
   border-radius: 20px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.16);
+  transition: all 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.16);
 }
 
 html[dir="rtl"] .hero-action-card {
@@ -268,24 +273,32 @@ html[dir="rtl"] .hero-action-card {
 }
 
 .hero-action-card:hover {
-  background: rgba(30, 72, 50, 0.62);
-  border-color: rgba(238, 222, 197, 0.58);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 0 24px rgba(238, 222, 197, 0.2);
+  background: rgba(32, 76, 52, 0.58);
+  border-color: rgba(238, 222, 197, 0.6);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 
+    0 18px 40px rgba(0, 0, 0, 0.45), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3), 
+    0 0 25px rgba(238, 222, 197, 0.22);
 }
 
 .card-icon-box {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(238, 222, 197, 0.25) 0%, rgba(29, 73, 46, 0.7) 100%);
-  border: 1px solid rgba(238, 222, 197, 0.38);
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(238, 222, 197, 0.28) 0%, rgba(29, 73, 46, 0.72) 100%);
+  border: 1px solid rgba(238, 222, 197, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   color: #eedec5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease;
+}
+
+.hero-action-card:hover .card-icon-box {
+  transform: scale(1.08) rotate(-2deg);
 }
 
 .card-svg {
@@ -2073,8 +2086,13 @@ body.app-mode {
   }
 
   .welcome-headline {
-    font-size: 1.22rem !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.35rem !important;
     line-height: 1.25 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #faefe0 45%, #eedec5 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5)) !important;
     margin: 4px 0 6px !important;
     word-break: break-word !important;
   }
@@ -2097,9 +2115,14 @@ body.app-mode {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    padding: 10px 12px !important;
-    gap: 10px !important;
-    border-radius: 14px !important;
+    background: rgba(22, 54, 38, 0.38) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(238, 222, 197, 0.25) !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    padding: 11px 14px !important;
+    gap: 12px !important;
+    border-radius: 16px !important;
   }
 
   .card-icon-box {

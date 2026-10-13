@@ -206,17 +206,75 @@ function stripArabicFillers(text) {
     .trim();
 }
 
+function isTopicAdviceOrChoiceQuestion(text) {
+  const raw = text.trim().toLowerCase();
+  const stripped = stripArabicFillers(raw);
+
+  const arPatterns = [
+    /(انهي|أنهي|انهي واحده|انهي واحدة|انهي مجال|اي واحده|أي واحدة|اي مجال|أي مجال|ايهم|أيهم|انهو)/,
+    /(نبدأ بايه|نبدأ بإيه|نبتدي بايه|نبتدي بإيه|ابدا بايه|أبدأ بإيه|ابدأ منين|نبدأ منين)/,
+    /(تنصحني بايه|تنصحني بإيه|شايف ايه|ايه رأيك|إيه رأيك|اختار انت|اختارلي|قولي انت|رشحلي|بماذا تنصحني|ابدا بايه|أبدأ بإيه)/,
+    /(مش عارف اختار|محتار|مش عارف ابدأ|مش عارفه ابدأ)/
+  ];
+
+  const enPatterns = [
+    /(which one|which domain|which topic|which playbook|where should we start|what do you recommend|pick one|choose for me)/
+  ];
+
+  return arPatterns.some((p) => p.test(raw) || p.test(stripped)) ||
+         enPatterns.some((p) => p.test(raw));
+}
+
+function getTopicAdviceResponse(isAr) {
+  if (isAr) {
+    return `بما أن كل مرحلة مهنية بتكمل التي تليها، **أنصحك بالبدء وفقاً لأولويتك ووضعك الحالي:**
+
+1. **إذا كنت في مرحلة البحث والتقديم على الوظائف:**  
+   أنصحك أن نبدأ بـ **«صياغة وتطوير السيرة الذاتية (ATS Resume)»** لتحويل إنجازاتك إلى صياغة رقمية قياسية وتخطي أنظمة الفرز الآلي.
+
+2. **إذا كان لديك موعد مقابلة شخصية قادمة قريباً:**  
+   من الأفضل أن نقفز مباشرة للتدريب على **«المقابلات السلوكية (منهجية STAR)»** أو **«المقابلات التقنية»** لترتيب إجاباتك باحترافية وثقة.
+
+3. **إذا تلقيت عرض عمل (Job Offer) بالفعل:**  
+   نبدأ فوراً بـ **«استراتيجيات التفاوض على الراتب»** لتقييم العرض الشامل وصياغة عروض الرد المضادة.
+
+4. **إذا كنت تخطط للدخول في مجالات البيانات:**  
+   نستكشف معاً **«مسارات وظائف تكنولوجيا البيانات (Data Roles)»** لمعرفة الفروق والمهارات المطلوبة لكل مسار.
+
+**أخبرني، ما هو وضعك وأولويتك الحالية الآن؟ هل تحضر الـ CV أم تستعد لمقابلة عمل؟**`;
+  }
+  return `Depending on your current priority, here is my recommendation on where we should start:
+
+1. **If you are actively applying for positions:**  
+   I recommend starting with **ATS Resume Optimization** to craft metric-driven bullet points that clear recruiter ATS screeners.
+
+2. **If you have an upcoming interview:**  
+   Let's jump straight into **Behavioral Interviews (STAR Method)** or **Technical & System Design** drills.
+
+3. **If you already received a job offer:**  
+   We should focus on **Salary Negotiation Playbook** to benchmark compensation and frame counteroffers.
+
+4. **If exploring data tracks:**  
+   We can break down **Data Career Roadmaps (Analyst vs Engineer vs Scientist)**.
+
+Which of these matches your current situation best?`;
+}
+
 function isIdentityOrCapabilityQuestion(text) {
   const raw = text.trim().toLowerCase();
   const stripped = stripArabicFillers(raw);
 
   const arPatterns = [
     // Identity questions
-    /(مين انت|من أنت|انت مين|أنت مين|عرف نفسك|مين مسار|ايه مسار|ما هو مسار|عرفني بنفسك|اسمك ايه|هو انت مين)/,
+    /(مين انت|من أنت|انت مين|أنت مين|عرف نفسك|مين مسار|ايه مسار|ما هو مسار|عرفني بنفسك|اسمك ايه|هو انت مين|من مسار)/,
     // Capabilities and services
-    /(بتعمل ايه|بتعمل إيه|وظيفتك ايه|وظيفتك إيه|ايه وظيفتك|إيه وظيفتك|شغلتك ايه|بتساعد في ايه|بتساعد ف ايه|تساعدني ف ايه|تساعدني في ايه|ممكن تساعدني|تفهمني ايه|تفهمني إيه|ممكن تفهمني|ممكن تفيدني|بتقدر تعمل ايه|خدماتك ايه|ايه فايدتك|بتفيد بإيه)/,
+    /(تساعدني|تساعد|تفيدني|تفيد)\s*(ب|ف|في|بإيه|بايه|بشو)?/,
+    /(تقدر|ممكن|بتقدر|تستطيع|مستعد)\s+(تساعد|تفيد|تعمل|تقدّم|تقدم|تفهمني|تفهمنا)/,
+    /(ايه|إيه|ما هي|ما)\s*(خدماتك|وظيفتك|فائدتك|فايدتك|شغلتك|مهامك)/,
+    /(بتعمل|بتعملوا|بتعملو|بتسوي|بتسووا|بتفيد|بتفيدوا|بتساعد)\s*(ايه|إيه|شنو|شو|بايه|بإيه|في ايه|ف ايه)?/,
+    /(تفهمني ايه|تفهمني إيه|ممكن تفهمني|ممكن تفيدني|خدماتك ايه|ايه فايدتك|بتفيد بإيه)/,
     // Scope, topics, playbooks overview
-    /(تكلمني عن ايه|تكلمني عن إيه|نتكلم في ايه|نتكلم ف ايه|تحب نتكلم|تحب تكلمني|ايه المواضيع|إيه المواضيع|ايه المجالات|عن ايه فيهم|عن إيه فيهم|فيهم ايه|فيهم إيه|ايه هما الادلة|ايه هما الأدلة|ايه هي الادلة|ايه هي الأدلة|الادلة السبعة|الأدلة السبعة|7 ادلة|7 أدلة|كتب ايه|ملفات ايه|مراجع ايه)/
+    /(تكلمني عن ايه|تكلمني عن إيه|نتكلم في ايه|نتكلم ف ايه|تحب نتكلم|ايه المواضيع|إيه المواضيع|ايه المجالات|ايه هما الادلة|ايه هما الأدلة|ايه هي الادلة|ايه هي الأدلة|الادلة السبعة|الأدلة السبعة|7 ادلة|7 أدلة|كتب ايه|ملفات ايه|مراجع ايه)/
   ];
 
   const enPatterns = [
@@ -234,7 +292,7 @@ function isGreetingOrSmallTalk(text) {
   const stripped = stripArabicFillers(raw);
 
   const arGreetings = [
-    /^(أهلا|اهلا|مرحبا|مرحباً|سلام|السلام عليكم|سلام عليكم|صباح الخير|مساء الخير|هاي|ازيك|إزيك|عامل ايه|كيف حالك|كيفك|شخبارك)/,
+    /^(أهلا|اهلا|مرحبا|مرحباً|مرحب|مراحب|اهلين|أهلين|مرحبتين|هلا|يا هلا|هلا وغلا|هلا والله|حياك|حياك الله|سلام|السلام عليكم|سلام عليكم|سلامات|صباح الخير|مساء الخير|صباح النور|مساء النور|صباح الورد|مساء الورد|يسعد صباحك|يسعد مساك|هاي|ازيك|إزيك|عامل ايه|عاملة ايه|كيف حالك|كيفك|شخبارك|اخبارك|إخبارك|علومك|شعلومك|شمسوي|كيف الامور|كيف الأمور|منور|تحياتي|اهلا وسهلا|أهلا وسهلا)/,
     /^(شكرا|شكراً|تسلم|تسلمي|جزاك الله خيرا|يعطيك العافية|تمام|ماشي|أوك|اوك|ok|bye|مع السلامة|باي)$/
   ];
 
@@ -250,7 +308,7 @@ function isGreetingOrSmallTalk(text) {
 
 function getGreetingResponse(isAr) {
   if (isAr) {
-    return "أهلاً بك! أنا مسار، مرشدك المهني والوظيفي الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية واجتياز الفرز الآلي، المقابلات السلوكية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
+    return "يا أهلاً وسهلاً بك! أنا مسار، مرشدك المهني والوظيفي الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية واجتياز الفرز الآلي، المقابلات السلوكية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
   }
   return "Hello! I am Masar AI, your precision career and interview mentor. I am here to help you navigate your professional journey grounded in our 7 verified playbooks—covering ATS resume optimization, behavioral & technical interviews, salary negotiation, and data career roadmaps. How can I assist you today?";
 }
@@ -428,14 +486,21 @@ async function answerQuestion(question, history, env, wantsStream = false) {
   const cleanedQuestion = cleanQuery(question);
   const isAr = isArabic(cleanedQuestion);
 
-  // Fast path 1: Identity & Capabilities (who are you, what can you do, topics overview, how to help)
+  // Fast path 1: Topic Advice & Selection (which one to start with, which one do you recommend, where to begin)
+  if (isTopicAdviceOrChoiceQuestion(cleanedQuestion)) {
+    const resp = getTopicAdviceResponse(isAr);
+    if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
+    return { answer: resp, sources: [] };
+  }
+
+  // Fast path 2: Identity & Capabilities (who are you, what can you do, topics overview, how to help)
   if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
     const resp = getCapabilityResponse(isAr);
     if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
     return { answer: resp, sources: [] };
   }
 
-  // Fast path 2: Greetings & Small Talk (hi, thanks, how are you, bye)
+  // Fast path 3: Greetings & Small Talk (hi, thanks, how are you, bye, هلا وغلا)
   if (isGreetingOrSmallTalk(cleanedQuestion)) {
     const greeting = getGreetingResponse(isAr);
     if (wantsStream) return { stream: createStaticStream(greeting), sources: [] };
@@ -488,6 +553,12 @@ async function answerQuestion(question, history, env, wantsStream = false) {
 
   // Guardrail 1: Strictly handle empty/irrelevant retrieval
   if (rankedChunks.length === 0) {
+    if (isTopicAdviceOrChoiceQuestion(cleanedQuestion)) {
+      const resp = getTopicAdviceResponse(isAr);
+      if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
+      return { answer: resp, sources: [] };
+    }
+
     if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
       const resp = getCapabilityResponse(isAr);
       if (wantsStream) return { stream: createStaticStream(resp), sources: [] };

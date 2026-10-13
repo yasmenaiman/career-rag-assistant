@@ -70,6 +70,22 @@ const DICTIONARY = {
     persona_label: "Avatar:",
     persona_female: "Female",
     persona_male: "Male",
+    sidebar_badge: "7 VERIFIED PLAYBOOKS",
+    sidebar_title: "Career Intelligence Suite",
+    sidebar_sub: "Strictly grounded in tech career playbooks",
+    sb_cv: "ATS Resume Writing",
+    sb_cv_sub: "Quantified impact & keywords",
+    sb_star: "STAR Behavioral Method",
+    sb_star_sub: "Situation, Task, Action, Result",
+    sb_tech: "System Design & Tech",
+    sb_tech_sub: "Architecture & problem-solving",
+    sb_salary: "Salary Negotiation",
+    sb_salary_sub: "Counter-offers & benchmarking",
+    sb_data: "Data Career Roadmaps",
+    sb_data_sub: "Analyst vs Engineer vs Scientist",
+    sb_jd: "JD Keyword Analysis",
+    sb_jd_sub: "Targeted skill alignment",
+    sb_tip: "Click any playbook above to explore immediately.",
     welcome_heading: "I am Masar AI — Your Career & Interview Coach.",
 
     welcome_body: "I am here to guide you across ATS resume preparation, structured behavioral interviews (STAR framework), technical interview principles, salary negotiation playbooks, and modern data roadmaps.",
@@ -142,6 +158,22 @@ const DICTIONARY = {
     persona_label: "الأفاتار:",
     persona_female: "أنثى",
     persona_male: "ذكر",
+    sidebar_badge: "7 أدلة مهنية معتمدة",
+    sidebar_title: "منظومة مسار الاستشارية",
+    sidebar_sub: "موثقة بالكامل بدون تخمين أو خروج عن النص",
+    sb_cv: "السيرة الذاتية (معايير ATS)",
+    sb_cv_sub: "صياغة بالأرقام وتخطي الفرز الآلي",
+    sb_star: "المقابلات السلوكية (STAR)",
+    sb_star_sub: "الموقف والمهمة والإجراء والنتيجة",
+    sb_tech: "المقابلات التقنية والأنظمة",
+    sb_tech_sub: "هندسة الأنظمة وحل المشكلات",
+    sb_salary: "دليل التفاوض على الراتب",
+    sb_salary_sub: "العروض المضادة وتحصيل القيمة",
+    sb_data: "مسارات وظائف البيانات",
+    sb_data_sub: "مقارنة Analyst و Engineer و Scientist",
+    sb_jd: "تحليل بطاقة الوظيفة (JD)",
+    sb_jd_sub: "استخراج الكلمات وتطابق المهارات",
+    sb_tip: "اضغط على أي مسار لبدء الاستشارة فوراً.",
     welcome_heading: "أنا مسار (Masar AI) 🧭 — مرشدك المهني الذكي.",
 
     welcome_body: "أنا هنا لمساعدتك في صياغة سيرتك الذاتية لاجتياز أنظمة الـ ATS، التدريب على أسئلة المقابلات السلوكية والتقنية، التفاوض على الراتب، واختيار مسارك في مجالات البيانات.",
@@ -250,6 +282,20 @@ function setupEventListeners() {
         handleSend();
       }
     }
+  });
+
+  // Desktop Sidebar Playbook Items
+  document.querySelectorAll(".sidebar-playbook-item").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".sidebar-playbook-item").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const queryAttr = currentLang === "ar" ? "data-query-ar" : "data-query-en";
+      const query = btn.getAttribute(queryAttr) || btn.getAttribute("data-query-en");
+      if (query) {
+        questionInput.value = query;
+        handleSend();
+      }
+    });
   });
 
   // Role Explorer Action Button (if present)

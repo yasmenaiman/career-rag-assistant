@@ -65,6 +65,119 @@
 
   <!-- Focused Chatbot Layout -->
   <main class="platform-layout app-layout">
+    <!-- Desktop-Only Workspace Sidebar (Hidden on Mobile) -->
+    <aside class="desktop-workspace-sidebar" aria-label="Career Playbooks Workspace">
+      <div class="sidebar-header">
+        <div class="sidebar-badge">
+          <span class="badge-dot"></span>
+          <span data-i18n="sidebar_badge">7 VERIFIED PLAYBOOKS</span>
+        </div>
+        <h2 class="sidebar-title" data-i18n="sidebar_title">Career Intelligence Suite</h2>
+        <p class="sidebar-sub" data-i18n="sidebar_sub">Strictly grounded in tech career playbooks</p>
+      </div>
+
+      <div class="sidebar-playbooks-list">
+        <button type="button" class="sidebar-playbook-item active" data-topic="cv"
+                data-query-en="How can I format and write high-impact resume bullet points that pass ATS filters?"
+                data-query-ar="إزاي أصيغ إنجازاتي في السيرة الذاتية بطريقة احترافية تجتاز فحص أنظمة الـ ATS؟">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_cv">ATS Resume Writing</span>
+            <span class="sb-item-sub" data-i18n="sb_cv_sub">Quantified impact & keywords</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-playbook-item" data-topic="star"
+                data-query-en="Explain the STAR method for behavioral interviews with a strong real-world example."
+                data-query-ar="اشرحلي طريقة STAR للإجابة على الأسئلة السلوكية في المقابلة مع مثال عملي.">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <polygon points="12 8 13.2 10.5 16 10.9 14 12.8 14.5 15.5 12 14.2 9.5 15.5 10 12.8 8 10.9 10.8 10.5 12 8"></polygon>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_star">STAR Behavioral Method</span>
+            <span class="sb-item-sub" data-i18n="sb_star_sub">Situation, Task, Action, Result</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-playbook-item" data-topic="tech"
+                data-query-en="What is the best framework for approaching technical coding and system design interviews?"
+                data-query-ar="ما هي أفضل منهجية لحل أسئلة البرمجة ومقابلات تصميم الأنظمة التقنية؟">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_tech">System Design & Tech</span>
+            <span class="sb-item-sub" data-i18n="sb_tech_sub">Architecture & problem-solving</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-playbook-item" data-topic="salary"
+                data-query-en="What are the most effective strategies and steps to negotiate a salary offer?"
+                data-query-ar="ما هي خطوات واستراتيجيات التفاوض على الراتب عند تلقي عرض وظيفي؟">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              <circle cx="12" cy="14" r="2"></circle>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_salary">Salary Negotiation</span>
+            <span class="sb-item-sub" data-i18n="sb_salary_sub">Counter-offers & benchmarking</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-playbook-item" data-topic="data"
+                data-query-en="What is the key difference between a Data Analyst and Data Engineer roadmap and tools?"
+                data-query-ar="ما الفرق بين مسار Data Analyst ومسار Data Engineer وما هي المهارات المطلوبة؟">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_data">Data Career Roadmaps</span>
+            <span class="sb-item-sub" data-i18n="sb_data_sub">Analyst vs. Engineer vs. Scientist</span>
+          </div>
+        </button>
+
+        <button type="button" class="sidebar-playbook-item" data-topic="jd"
+                data-query-en="How do I break down a job description to extract keywords and align my experience?"
+                data-query-ar="كيف أحلل الـ Job Description وأستخرج الكلمات المفتاحية لربطها بمهاراتي؟">
+          <div class="sb-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sb-svg">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <div class="sb-item-text">
+            <span class="sb-item-title" data-i18n="sb_jd">JD Keyword Analysis</span>
+            <span class="sb-item-sub" data-i18n="sb_jd_sub">Targeted skill alignment</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="sidebar-footer-tip">
+        <span class="tip-icon">💡</span>
+        <span class="tip-text" data-i18n="sb_tip">Click any playbook above to explore immediately.</span>
+      </div>
+    </aside>
+
     <section id="coach-section" class="coach-section app-coach-section">
       <div class="coach-container">
         <!-- Floating Glass Header Ribbon -->

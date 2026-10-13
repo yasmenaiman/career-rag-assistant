@@ -196,34 +196,93 @@ function cleanQuery(query) {
     .trim();
 }
 
+function stripArabicFillers(text) {
+  return text
+    .toLowerCase()
+    .replace(/[؟?.,!،_«»"']+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^(طب|طيب|يعني|هو|هي|طب هو|طيب هو|يا ريت|لو سمحت|ممكن|طب ممكن|ممكن تقولي|ممكن تفهمني|ممكن تساعدني|قولي|فهمني|فهمنا|عرفني|تحب|عايز اعرف|عايزك|عايزة اعرف|حابب اعرف|محتاج اعرف)\s+/, "")
+    .trim();
+}
+
+function isIdentityOrCapabilityQuestion(text) {
+  const raw = text.trim().toLowerCase();
+  const stripped = stripArabicFillers(raw);
+
+  const arPatterns = [
+    // Identity questions
+    /(مين انت|من أنت|انت مين|أنت مين|عرف نفسك|مين مسار|ايه مسار|ما هو مسار|عرفني بنفسك|اسمك ايه|هو انت مين)/,
+    // Capabilities and services
+    /(بتعمل ايه|بتعمل إيه|وظيفتك ايه|وظيفتك إيه|ايه وظيفتك|إيه وظيفتك|شغلتك ايه|بتساعد في ايه|بتساعد ف ايه|تساعدني ف ايه|تساعدني في ايه|ممكن تساعدني|تفهمني ايه|تفهمني إيه|ممكن تفهمني|ممكن تفيدني|بتقدر تعمل ايه|خدماتك ايه|ايه فايدتك|بتفيد بإيه)/,
+    // Scope, topics, playbooks overview
+    /(تكلمني عن ايه|تكلمني عن إيه|نتكلم في ايه|نتكلم ف ايه|تحب نتكلم|تحب تكلمني|ايه المواضيع|إيه المواضيع|ايه المجالات|عن ايه فيهم|عن إيه فيهم|فيهم ايه|فيهم إيه|ايه هما الادلة|ايه هما الأدلة|ايه هي الادلة|ايه هي الأدلة|الادلة السبعة|الأدلة السبعة|7 ادلة|7 أدلة|كتب ايه|ملفات ايه|مراجع ايه)/
+  ];
+
+  const enPatterns = [
+    /(who are you|what is masar|what are you|introduce yourself)/,
+    /(what can you do|how can you help|what do you do|what are your capabilities|what services)/,
+    /(what topics|what can we talk about|what are the 7 playbooks|which playbooks|tell me about them|what do you cover)/
+  ];
+
+  return arPatterns.some((p) => p.test(raw) || p.test(stripped)) ||
+         enPatterns.some((p) => p.test(raw));
+}
+
 function isGreetingOrSmallTalk(text) {
-  const t = text.trim().toLowerCase();
+  const raw = text.trim().toLowerCase();
+  const stripped = stripArabicFillers(raw);
 
   const arGreetings = [
     /^(أهلا|اهلا|مرحبا|مرحباً|سلام|السلام عليكم|سلام عليكم|صباح الخير|مساء الخير|هاي|ازيك|إزيك|عامل ايه|كيف حالك|كيفك|شخبارك)/,
-    /^(شكرا|شكراً|تسلم|تسلمي|جزاك الله خيرا|يعطيك العافية|تمام|ماشي|أوك|اوك|ok|bye|مع السلامة|باي)$/,
-    /^(مين انت|من أنت|عرف نفسك|بتعمل ايه|إيه وظيفتك|وظيفتك ايه|عرفني بيك|انت مين)/
+    /^(شكرا|شكراً|تسلم|تسلمي|جزاك الله خيرا|يعطيك العافية|تمام|ماشي|أوك|اوك|ok|bye|مع السلامة|باي)$/
   ];
 
   const enGreetings = [
     /^(hi|hello|hey|good morning|good afternoon|good evening|howdy|sup|greetings)\b/,
-    /^(how are you|how are you doing|who are you|what can you do|what is your name)\b/,
+    /^(how are you|how are you doing|how is it going)\b/,
     /^(thanks|thank you|thx|cool|awesome|great|ok|okay|bye|goodbye|see you)\b/
   ];
 
-  return arGreetings.some((r) => r.test(t)) || enGreetings.some((r) => r.test(t));
+  return arGreetings.some((r) => r.test(raw) || r.test(stripped)) ||
+         enGreetings.some((r) => r.test(raw));
 }
 
 function getGreetingResponse(isAr) {
   if (isAr) {
-    return "أهلاً بك! أنا «مسار» (Masar AI)، مرشدك المهني الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية وفق معايير ATS، التحضير للمقابلات السلوكية والتقنية بمنهجية STAR، التفاوض على العروض الوظيفية، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
+    return "أهلاً بك! أنا مسار، مرشدك المهني والوظيفي الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية واجتياز الفرز الآلي، المقابلات السلوكية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
   }
   return "Hello! I am Masar AI, your precision career and interview mentor. I am here to help you navigate your professional journey grounded in our 7 verified playbooks—covering ATS resume optimization, behavioral & technical interviews, salary negotiation, and data career roadmaps. How can I assist you today?";
 }
 
+function getCapabilityResponse(isAr) {
+  if (isAr) {
+    return `أهلاً بك! أنا **مسار**، مرشدك المهني الذكي. مهمتي تقديم استشارات مهنية دقيقة وموثوقة استناداً إلى **أدلتنا السبعة المعتمدة**، ويمكنني مساعدتك خطوة بخطوة في المجالات التالية:
+
+1. **صياغة وتحسين السيرة الذاتية (ATS Resume):** تحويل إنجازاتك إلى صياغة رقمية قياسية وتخطي أنظمة الفرز الآلي بنجاح.
+2. **المقابلات السلوكية (منهجية STAR):** التدريب على صياغة مواقفك وإجاباتك باحترافية وفق نموذج (الموقف، المهمة، الإجراء، النتيجة).
+3. **المقابلات التقنية وتصميم الأنظمة (System Design):** استراتيجيات حل المشكلات البرمجية، التفكير المنطقي، وهندسة الأنظمة.
+4. **التفاوض على العروض والرواتب:** تقييم القيمة السوقية، إدارة العروض الوظيفية، وصياغة عروض الرد المضادة.
+5. **مسارات وظائف تكنولوجيا البيانات:** توضيح الفروق والمهارات المطلوبة لكل من مسارات Data Analyst و Data Engineer و Data Scientist.
+6. **تحليل بطاقات الوصف الوظيفي (Job Descriptions):** استخراج الكلمات المفتاحية ومطابقة خبراتك بدقة مع متطلبات الوظيفة المستهدفة.
+
+تحب نبدأ بمناقشة أي من هذه المجالات؟ أو اكتب لي سؤالك مباشرة!`;
+  }
+  return `Hello! I am **Masar AI**, your precision Career Intelligence Mentor. I am here to guide you through your professional career journey strictly grounded in our **7 verified playbooks**:
+
+1. **ATS Resume Optimization:** Crafting metric-driven bullet points that clear recruiter ATS screeners.
+2. **Behavioral Interviews (STAR Method):** Structuring impactful answers using Situation, Task, Action, and Result.
+3. **Technical Interviews & System Design:** Problem-solving approaches, coding patterns, and system design frameworks.
+4. **Salary & Offer Negotiation:** Total compensation evaluation, leverage discovery, and framing counteroffers.
+5. **Data Career Roadmaps:** Understanding role expectations across Data Analyst, Data Engineer, and Data Scientist.
+6. **Job Description Keyword Analysis:** Extracting core competencies and aligning your profile to job postings.
+
+Which of these domains would you like to explore first? Or feel free to ask any specific career question!`;
+}
+
 function getOutOfDomainResponse(isAr) {
   if (isAr) {
-    return "عذراً، هذا الموضوع غير موجود في الأدلة المهنية المعتمدة المتاحة لدي. أنا مرشد مهني مخصص فقط لمساعدتك في موضوعات التطوير المهني والوظائف المذكورة في أدلتنا السبعة (كتابة السيرة الذاتية، تحليل الوظائف، المقابلات الشخصية، التفاوض على الرواتب، ومسارات تكنولوجيا البيانات). هل ترغب في سؤالي عن أي من هذه المجالات المهنية؟";
+    return "عذراً، هذا الموضوع خارج نطاق الأدلة المهنية المعتمدة المتاحة لدي. أنا مرشد مهني مخصص فقط لمساعدتك في موضوعات التطوير المهني والوظائف المذكورة في أدلتنا السبعة (كتابة السيرة الذاتية، المقابلات الشخصية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). هل ترغب في سؤالي عن أي من هذه المجالات المهنية؟";
   }
   return "I apologize, but this topic is outside the scope of our verified career playbooks. I am strictly specialized in career guidance (resume writing, job description analysis, behavioral and technical interviews, salary negotiation, career growth, and data roles). How can I assist you with your career preparation?";
 }
@@ -369,6 +428,20 @@ async function answerQuestion(question, history, env, wantsStream = false) {
   const cleanedQuestion = cleanQuery(question);
   const isAr = isArabic(cleanedQuestion);
 
+  // Fast path 1: Identity & Capabilities (who are you, what can you do, topics overview, how to help)
+  if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
+    const resp = getCapabilityResponse(isAr);
+    if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
+    return { answer: resp, sources: [] };
+  }
+
+  // Fast path 2: Greetings & Small Talk (hi, thanks, how are you, bye)
+  if (isGreetingOrSmallTalk(cleanedQuestion)) {
+    const greeting = getGreetingResponse(isAr);
+    if (wantsStream) return { stream: createStaticStream(greeting), sources: [] };
+    return { answer: greeting, sources: [] };
+  }
+
   // 1. Resolve Search Query (taking history into account for follow-ups)
   const searchQuery = await resolveSearchQuery(cleanedQuestion, history, isAr, env);
 
@@ -415,6 +488,12 @@ async function answerQuestion(question, history, env, wantsStream = false) {
 
   // Guardrail 1: Strictly handle empty/irrelevant retrieval
   if (rankedChunks.length === 0) {
+    if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
+      const resp = getCapabilityResponse(isAr);
+      if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
+      return { answer: resp, sources: [] };
+    }
+
     if (isGreetingOrSmallTalk(cleanedQuestion)) {
       const greeting = getGreetingResponse(isAr);
       if (wantsStream) {

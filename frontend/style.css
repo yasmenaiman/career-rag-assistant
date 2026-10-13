@@ -1501,6 +1501,25 @@ html[dir="rtl"] .metric-item:not(:last-child)::after {
   font-size: 0.95rem;
   line-height: 1.7;
   word-break: break-word;
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+.bubble-content {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+.bubble-content p,
+.bubble-content li,
+.bubble-content ul,
+.bubble-content ol,
+.bubble-content h1,
+.bubble-content h2,
+.bubble-content h3,
+.bubble-content h4 {
+  unicode-bidi: plaintext;
+  text-align: start;
 }
 
 .message.user .bubble {

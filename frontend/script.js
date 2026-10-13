@@ -496,9 +496,9 @@ function appendUserMessage(text) {
   avatarImg.className = "avatar-img user-avatar-img";
   avatar.appendChild(avatarImg);
 
-
   const bubble = document.createElement("div");
   bubble.className = "bubble";
+  bubble.setAttribute("dir", "auto");
   bubble.textContent = text;
 
   row.appendChild(avatar);
@@ -519,12 +519,13 @@ function createStreamingAssistantMessage() {
   avatarImg.className = "avatar-img assistant-avatar-img";
   avatar.appendChild(avatarImg);
 
-
   const bubble = document.createElement("div");
   bubble.className = "bubble";
+  bubble.setAttribute("dir", "auto");
 
   const bubbleContent = document.createElement("div");
   bubbleContent.className = "bubble-content";
+  bubbleContent.setAttribute("dir", "auto");
   bubbleContent.innerHTML = `<span class="thinking-pulse"><span></span><span></span><span></span></span>`;
 
   bubble.appendChild(bubbleContent);
@@ -542,6 +543,9 @@ function createStreamingAssistantMessage() {
     const rawHtml = marked.parse(markdownText || "");
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubbleContent.innerHTML = cleanHtml + `<span class="streaming-cursor">▌</span>`;
+    bubbleContent.querySelectorAll("p, li, h1, h2, h3, h4, h5, h6, ul, ol").forEach((el) => {
+      el.setAttribute("dir", "auto");
+    });
     scrollChatToBottom();
   }
 
@@ -550,6 +554,9 @@ function createStreamingAssistantMessage() {
     const rawHtml = marked.parse(finalMarkdownText || "");
     const cleanHtml = DOMPurify.sanitize(rawHtml);
     bubbleContent.innerHTML = cleanHtml;
+    bubbleContent.querySelectorAll("p, li, h1, h2, h3, h4, h5, h6, ul, ol").forEach((el) => {
+      el.setAttribute("dir", "auto");
+    });
 
     const footer = document.createElement("div");
     footer.className = "bubble-footer";

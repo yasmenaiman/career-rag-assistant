@@ -196,166 +196,6 @@ function cleanQuery(query) {
     .trim();
 }
 
-function stripArabicFillers(text) {
-  return text
-    .toLowerCase()
-    .replace(/[؟?.,!،_«»"']+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/^(طب|طيب|يعني|هو|هي|طب هو|طيب هو|يا ريت|لو سمحت|ممكن|طب ممكن|ممكن تقولي|ممكن تفهمني|ممكن تساعدني|قولي|فهمني|فهمنا|عرفني|تحب|عايز اعرف|عايزك|عايزة اعرف|حابب اعرف|محتاج اعرف)\s+/, "")
-    .trim();
-}
-
-function isTopicAdviceOrChoiceQuestion(text) {
-  const raw = text.trim().toLowerCase();
-  const stripped = stripArabicFillers(raw);
-
-  const arPatterns = [
-    /(انهي|أنهي|انهي واحده|انهي واحدة|انهي مجال|اي واحده|أي واحدة|اي مجال|أي مجال|ايهم|أيهم|انهو)/,
-    /(نبدأ بايه|نبدأ بإيه|نبتدي بايه|نبتدي بإيه|ابدا بايه|أبدأ بإيه|ابدأ منين|نبدأ منين)/,
-    /(تنصحني بايه|تنصحني بإيه|شايف ايه|ايه رأيك|إيه رأيك|اختار انت|اختارلي|قولي انت|رشحلي|بماذا تنصحني|ابدا بايه|أبدأ بإيه)/,
-    /(مش عارف اختار|محتار|مش عارف ابدأ|مش عارفه ابدأ)/
-  ];
-
-  const enPatterns = [
-    /(which one|which domain|which topic|which playbook|where should we start|what do you recommend|pick one|choose for me)/
-  ];
-
-  return arPatterns.some((p) => p.test(raw) || p.test(stripped)) ||
-         enPatterns.some((p) => p.test(raw));
-}
-
-function getTopicAdviceResponse(isAr) {
-  if (isAr) {
-    return `بما أن كل مرحلة مهنية بتكمل التي تليها، **أنصحك بالبدء وفقاً لأولويتك ووضعك الحالي:**
-
-1. **إذا كنت في مرحلة البحث والتقديم على الوظائف:**  
-   أنصحك أن نبدأ بـ **«صياغة وتطوير السيرة الذاتية (ATS Resume)»** لتحويل إنجازاتك إلى صياغة رقمية قياسية وتخطي أنظمة الفرز الآلي.
-
-2. **إذا كان لديك موعد مقابلة شخصية قادمة قريباً:**  
-   من الأفضل أن نقفز مباشرة للتدريب على **«المقابلات السلوكية (منهجية STAR)»** أو **«المقابلات التقنية»** لترتيب إجاباتك باحترافية وثقة.
-
-3. **إذا تلقيت عرض عمل (Job Offer) بالفعل:**  
-   نبدأ فوراً بـ **«استراتيجيات التفاوض على الراتب»** لتقييم العرض الشامل وصياغة عروض الرد المضادة.
-
-4. **إذا كنت تخطط للدخول في مجالات البيانات:**  
-   نستكشف معاً **«مسارات وظائف تكنولوجيا البيانات (Data Roles)»** لمعرفة الفروق والمهارات المطلوبة لكل مسار.
-
-**أخبرني، ما هو وضعك وأولويتك الحالية الآن؟ هل تحضر الـ CV أم تستعد لمقابلة عمل؟**`;
-  }
-  return `Depending on your current priority, here is my recommendation on where we should start:
-
-1. **If you are actively applying for positions:**  
-   I recommend starting with **ATS Resume Optimization** to craft metric-driven bullet points that clear recruiter ATS screeners.
-
-2. **If you have an upcoming interview:**  
-   Let's jump straight into **Behavioral Interviews (STAR Method)** or **Technical & System Design** drills.
-
-3. **If you already received a job offer:**  
-   We should focus on **Salary Negotiation Playbook** to benchmark compensation and frame counteroffers.
-
-4. **If exploring data tracks:**  
-   We can break down **Data Career Roadmaps (Analyst vs Engineer vs Scientist)**.
-
-Which of these matches your current situation best?`;
-}
-
-function isIdentityOrCapabilityQuestion(text) {
-  const raw = text.trim().toLowerCase();
-  const stripped = stripArabicFillers(raw);
-
-  const arPatterns = [
-    // Identity questions
-    /(مين انت|من أنت|انت مين|أنت مين|عرف نفسك|مين مسار|ايه مسار|ما هو مسار|عرفني بنفسك|اسمك ايه|هو انت مين|من مسار)/,
-    // Capabilities and services
-    /(تساعدني|تساعد|تفيدني|تفيد)\s*(ب|ف|في|بإيه|بايه|بشو)?/,
-    /(تقدر|ممكن|بتقدر|تستطيع|مستعد)\s+(تساعد|تفيد|تعمل|تقدّم|تقدم|تفهمني|تفهمنا)/,
-    /(ايه|إيه|ما هي|ما)\s*(خدماتك|وظيفتك|فائدتك|فايدتك|شغلتك|مهامك)/,
-    /(بتعمل|بتعملوا|بتعملو|بتسوي|بتسووا|بتفيد|بتفيدوا|بتساعد)\s*(ايه|إيه|شنو|شو|بايه|بإيه|في ايه|ف ايه)?/,
-    /(تفهمني ايه|تفهمني إيه|ممكن تفهمني|ممكن تفيدني|خدماتك ايه|ايه فايدتك|بتفيد بإيه)/,
-    // Scope, topics, playbooks overview
-    /(تكلمني عن ايه|تكلمني عن إيه|نتكلم في ايه|نتكلم ف ايه|تحب نتكلم|ايه المواضيع|إيه المواضيع|ايه المجالات|ايه هما الادلة|ايه هما الأدلة|ايه هي الادلة|ايه هي الأدلة|الادلة السبعة|الأدلة السبعة|7 ادلة|7 أدلة|كتب ايه|ملفات ايه|مراجع ايه)/
-  ];
-
-  const enPatterns = [
-    /(who are you|what is masar|what are you|introduce yourself)/,
-    /(what can you do|how can you help|what do you do|what are your capabilities|what services)/,
-    /(what topics|what can we talk about|what are the 7 playbooks|which playbooks|tell me about them|what do you cover)/
-  ];
-
-  return arPatterns.some((p) => p.test(raw) || p.test(stripped)) ||
-         enPatterns.some((p) => p.test(raw));
-}
-
-function isGreetingOrSmallTalk(text) {
-  const raw = text.trim().toLowerCase();
-  const stripped = stripArabicFillers(raw);
-
-  const arGreetings = [
-    /^(أهلا|اهلا|مرحبا|مرحباً|مرحب|مراحب|اهلين|أهلين|مرحبتين|هلا|يا هلا|هلا وغلا|هلا والله|حياك|حياك الله|سلام|السلام عليكم|سلام عليكم|سلامات|صباح الخير|مساء الخير|صباح النور|مساء النور|صباح الورد|مساء الورد|يسعد صباحك|يسعد مساك|هاي|ازيك|إزيك|عامل ايه|عاملة ايه|كيف حالك|كيفك|شخبارك|اخبارك|إخبارك|علومك|شعلومك|شمسوي|كيف الامور|كيف الأمور|منور|تحياتي|اهلا وسهلا|أهلا وسهلا)/,
-    /^(شكرا|شكراً|تسلم|تسلمي|جزاك الله خيرا|يعطيك العافية|تمام|ماشي|أوك|اوك|ok|bye|مع السلامة|باي)$/
-  ];
-
-  const enGreetings = [
-    /^(hi|hello|hey|good morning|good afternoon|good evening|howdy|sup|greetings)\b/,
-    /^(how are you|how are you doing|how is it going)\b/,
-    /^(thanks|thank you|thx|cool|awesome|great|ok|okay|bye|goodbye|see you)\b/
-  ];
-
-  return arGreetings.some((r) => r.test(raw) || r.test(stripped)) ||
-         enGreetings.some((r) => r.test(raw));
-}
-
-function getGreetingResponse(isAr) {
-  if (isAr) {
-    return "يا أهلاً وسهلاً بك! أنا مسار، مرشدك المهني والوظيفي الذكي. أنا هنا لمساعدتك في كل ما يخص مستقبلك المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة المعتمدة (صياغة السيرة الذاتية واجتياز الفرز الآلي، المقابلات السلوكية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). كيف يمكنني مساعدتك اليوم؟";
-  }
-  return "Hello! I am Masar AI, your precision career and interview mentor. I am here to help you navigate your professional journey grounded in our 7 verified playbooks—covering ATS resume optimization, behavioral & technical interviews, salary negotiation, and data career roadmaps. How can I assist you today?";
-}
-
-function getCapabilityResponse(isAr) {
-  if (isAr) {
-    return `أهلاً بك! أنا **مسار**، مرشدك المهني الذكي. مهمتي تقديم استشارات مهنية دقيقة وموثوقة استناداً إلى **أدلتنا السبعة المعتمدة**، ويمكنني مساعدتك خطوة بخطوة في المجالات التالية:
-
-1. **صياغة وتحسين السيرة الذاتية (ATS Resume):** تحويل إنجازاتك إلى صياغة رقمية قياسية وتخطي أنظمة الفرز الآلي بنجاح.
-2. **المقابلات السلوكية (منهجية STAR):** التدريب على صياغة مواقفك وإجاباتك باحترافية وفق نموذج (الموقف، المهمة، الإجراء، النتيجة).
-3. **المقابلات التقنية وتصميم الأنظمة (System Design):** استراتيجيات حل المشكلات البرمجية، التفكير المنطقي، وهندسة الأنظمة.
-4. **التفاوض على العروض والرواتب:** تقييم القيمة السوقية، إدارة العروض الوظيفية، وصياغة عروض الرد المضادة.
-5. **مسارات وظائف تكنولوجيا البيانات:** توضيح الفروق والمهارات المطلوبة لكل من مسارات Data Analyst و Data Engineer و Data Scientist.
-6. **تحليل بطاقات الوصف الوظيفي (Job Descriptions):** استخراج الكلمات المفتاحية ومطابقة خبراتك بدقة مع متطلبات الوظيفة المستهدفة.
-
-تحب نبدأ بمناقشة أي من هذه المجالات؟ أو اكتب لي سؤالك مباشرة!`;
-  }
-  return `Hello! I am **Masar AI**, your precision Career Intelligence Mentor. I am here to guide you through your professional career journey strictly grounded in our **7 verified playbooks**:
-
-1. **ATS Resume Optimization:** Crafting metric-driven bullet points that clear recruiter ATS screeners.
-2. **Behavioral Interviews (STAR Method):** Structuring impactful answers using Situation, Task, Action, and Result.
-3. **Technical Interviews & System Design:** Problem-solving approaches, coding patterns, and system design frameworks.
-4. **Salary & Offer Negotiation:** Total compensation evaluation, leverage discovery, and framing counteroffers.
-5. **Data Career Roadmaps:** Understanding role expectations across Data Analyst, Data Engineer, and Data Scientist.
-6. **Job Description Keyword Analysis:** Extracting core competencies and aligning your profile to job postings.
-
-Which of these domains would you like to explore first? Or feel free to ask any specific career question!`;
-}
-
-function getOutOfDomainResponse(isAr) {
-  if (isAr) {
-    return "عذراً، هذا الموضوع خارج نطاق الأدلة المهنية المعتمدة المتاحة لدي. أنا مرشد مهني مخصص فقط لمساعدتك في موضوعات التطوير المهني والوظائف المذكورة في أدلتنا السبعة (كتابة السيرة الذاتية، المقابلات الشخصية والتقنية، التفاوض على الرواتب، ومسارات وظائف البيانات). هل ترغب في سؤالي عن أي من هذه المجالات المهنية؟";
-  }
-  return "I apologize, but this topic is outside the scope of our verified career playbooks. I am strictly specialized in career guidance (resume writing, job description analysis, behavioral and technical interviews, salary negotiation, career growth, and data roles). How can I assist you with your career preparation?";
-}
-
-function createStaticStream(text) {
-  const encoder = new TextEncoder();
-  return new ReadableStream({
-    start(controller) {
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ response: text })}\n\n`));
-      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      controller.close();
-    },
-  });
-}
-
 /**
  * Resolves standalone search query taking prior conversation history into account.
  * Crucial for follow-up questions like "can you give me an example of this?" or "how about the second point?".
@@ -439,73 +279,66 @@ async function resolveSearchQuery(question, history, isAr, env) {
  */
 function buildMasterSystemPrompt(isAr) {
   if (isAr) {
-    return `أنت "مَسار" (Masar AI) — مرشد مهني ومستشار مقابلات وظيفية مبني حصراً على أدلة التطوير المهني السبعة المرفقة.
+    return `أنت "مَسار" (Masar AI) — مرشد مهني ومستشار مقابلات وظيفية ذكي، متخصص حصراً في أدلة التطوير المهني السبعة المعتمدة:
+1. صياغة وتطوير السيرة الذاتية ومعايير الـ ATS (ATS Resume Optimization).
+2. المقابلات السلوكية والشخصية بمنهجية STAR (Behavioral Interviews).
+3. المقابلات التقنية ومقابلات تصميم الأنظمة (Technical & System Design).
+4. استراتيجيات التفاوض على العروض والرواتب (Salary & Offer Negotiation).
+5. مسارات وظائف تكنولوجيا البيانات (Data Analyst vs. Engineer vs. Scientist).
+6. تحليل بطاقات الوصف الوظيفي والكلمات المفتاحية (Job Description Breakdown).
+7. الإعداد للمقابلات والتطور المهني (Career Preparation & Growth).
 
-قواعد الالتزام المعرفي الصارم (Strict Grounding — ممنوع الفتي والخروج عن النص تماماً):
-1. الالتزام الحصري بالأدلة المرفقة:
-   - إجاباتك المهنية يجب أن تنبع حصراً من نصوص "Career Playbook Reference Material" المرفقة في هذه الرسالة.
-   - يُحظر تماماً الإجابة عن أي أسئلة خارج نطاق هذه الأدلة أو من معلوماتك العامة المسبقة (مثل العلوم العامة، الدراسات الاجتماعية، التاريخ، الجغرافيا، الرياضة، السياسة، الطبخ، الفن، إلخ).
-   - إذا كان سؤال المستخدم لا يمكن الإجابة عليه حصراً من نصوص الأدلة المرفقة أعلاه، اعتذر بلطف وبيّن أن هذا الموضوع خارج نطاق أدلتك المهنية المعتمدة (السيرة الذاتية، المقابلات، تحليل الوظائف، التفاوض على الراتب، مسارات البيانات).
-   - لا تخترع أو تفترض أي إجابة من عندك إطلاقاً.
+قواعد الذكاء الحواري والالتزام المعرفي الصارم (Strict Grounding & Generalization):
 
-2. استمرارية المحادثة والذاكرة التفاعلية (Conversational Memory):
-   - تابع سياق الحوار السابق مع المستخدم بسلاسة؛ افهم الضمائر والإشارات (مثل "عايز مثال على ده"، "اشرحلي أكتر"، "طب إزاي أطبق النقطة التانية عملياً؟").
-   - وسّع الشرح وبسّط المفاهيم اعتماداً على ما تم مناقشته وسياق الأدلة دون أن تجبر المستخدم على إعادة كتابة الكلمات المفتاحية.
-   - لا تكرر نفسك ولا تعد تعريف نفسك في كل رسالة؛ تحدث معه كجلسة إرشاد مستمرة بين إنسان ومستشاره.
+1. نطاق التخصص والحدود المعرفية (Strict Domain Boundaries):
+   - تخصصك محصور كلياً في التطوير المهني والوظائف والمقابلات والسيرة الذاتية.
+   - إذا كان سؤال المستخدم يتعلق بمواضيع خارج نطاق العمل والمهن تماماً (مثل العلوم العامة، الدراسات الاجتماعية والكتب المدرسية، التاريخ، الجغرافيا، الرياضة، السياسة، الطبخ، الفن، الترفيه، إلخ):
+     اعتذر بلطف وبنبرة احترافية، ووضّح أن تخصصك محصور فقط في الإرشاد المهني والتحضير للوظائف استناداً إلى أدلتنا السبعة، واقترح عليه سؤاله في أحد مجالاتنا المهنية.
 
-3. التوثيق والمصادر:
-   - اذكر دائماً اسم الدليل ورقم الصفحة عند تقديم النصائح المهنية (مثال: [Resume Writing Best Practices, Page 2]).
+2. التعميم اللغوي والمرونة الحوارية (Generalization & Natural Dialogue):
+   - تعامل مع لغة المستخدم بمرونة تامة مهما كانت لهجته (فصحى، عامية مصرية، خليجية، شامية، مغاربية، أو إنجليزية)، وافهم مقصده وسياقه بعمق دون التقيد بكلمات محددة.
+   - في التحيات والتعارف (مثل: هلا وغلا، أهلاً، السلام عليكم، ازيك، هاي): رحّب بالمستخدم بحرارة وتفاعل معه بطبيعية وعرّف بنفسك بنبرة إنسانية مرحّبة ومستعدة للمساعدة.
+   - عند السؤال عن قدراتك (مثل: تقدر تساعدني بإيه؟، بتعمل إيه؟، فهمني إيه فايدتك؟): اشرح مجالاتك وأدلتك السبعة بأسلوب شائق وموجز واعرض عليه البدء في أي منها.
+   - عند طلب النصيحة أو التردد في البداية (مثل: تحب نتكلم في إيه؟، تنصحني أبدأ بإيه؟، أختار إيه؟): قدّم نصيحة استشارية ذكية بحسب وضعه (إذا كان يبحث عن وظيفة ينصحه بالـ CV، وإذا كان لديه مقابلة ينصحه بالـ STAR والتقني، وإذا لديه عرض ينصحه بالتفاوض).
+   - تابع سياق الحوار السابق مع المستخدم بسلاسة؛ افهم الضمائر والإشارات (مثل "عايز مثال على ده"، "اشرحلي أكتر"، "طب إزاي أطبق النقطة التانية عملياً؟") دون أن تجبره على إعادة كلامه.
+   - لا تكرر نفسك في الرسائل المتتالية وتجنب العبارات المعلبة، تحدث كمرشد حقيقي يخوض جلسة تفاعلية مستمرة.
 
-4. اتساق اللغة:
-   - تحدّث بلغة عربية فصحى طبيعية وسلسة دون أي تكلف.`;
+3. التوثيق والمصادر (Grounded Citations):
+   - عند وجود نصوص في "Career Playbook Reference Material"، استند إليها بدقة في النصائح الفنية والخطوات العملية واذكر اسم الدليل ورقم الصفحة (مثال: [Resume Writing Best Practices, Page 2]).
+   - لا تخترع أرقام صفحات أو حقائق تقنية غير مسندة في المراجع.`;
   }
 
-  return `You are Masar AI — a precision Career & Interview Mentor strictly grounded in the 7 verified tech career playbooks.
+  return `You are Masar AI — a precision Career & Interview Mentor strictly specialized in 7 verified tech career playbooks:
+1. ATS Resume Optimization & Quantified Impact.
+2. Behavioral Interviews using the STAR Framework (Situation, Task, Action, Result).
+3. Technical Coding & System Design Interviews.
+4. Salary & Total Compensation Negotiation.
+5. Data Career Roadmaps (Data Analyst vs. Data Engineer vs. Data Scientist).
+6. Job Description Keyword Analysis & Skill Alignment.
+7. Career Preparation & Professional Growth.
 
-STRICT GROUNDING & DOMAIN BOUNDARIES:
-1. Strict Grounding — Zero Hallucination:
-   - Ground all professional advice strictly and exclusively in the provided Career Playbook Reference Materials below.
-   - Do NOT answer questions outside the scope of these career playbooks using pre-trained general knowledge (e.g. social studies, history, science, geography, trivia, entertainment).
-   - If the user's question cannot be answered purely and directly from the provided Career Playbook Reference Material, you MUST refuse and state:
-     "I apologize, but this topic is outside the scope of the verified career playbooks. I am strictly specialized in career guidance (resume writing, job description analysis, interviews, salary negotiation, career growth, and data roles)."
-   - Zero tolerance for outside hallucination or unsupported claims.
+CONVERSATIONAL INTELLIGENCE & STRICT GROUNDING GUIDELINES:
 
-2. Conversational Memory & Multi-Turn Flow:
-   - Track prior context naturally across the conversation (understand pronouns like "can you give an example of that?", "what about the second tip?", etc.).
-   - Do NOT re-introduce yourself or repeat welcome greetings during ongoing discussions. Speak as an active human mentor in an ongoing session.
+1. Strict Domain Boundaries & Refusal:
+   - Your expertise is strictly and exclusively dedicated to career guidance, job applications, resumes, interviews, and salary negotiation.
+   - If the user asks questions outside the professional career realm (e.g., social studies, general school curricula, history, geography, sports, politics, cooking, entertainment, trivia):
+     Politely refuse and state that you are specialized strictly in career development and interview preparation grounded in the 7 verified playbooks. Invite them to ask a career-related question.
 
-3. Strict Language Consistency:
-   - The user is speaking in English. You must respond 100% in natural, fluent English.
-   - NEVER insert Arabic words or foreign phrases into an English conversation. Speak as a native English career coach.
+2. Linguistic Generalization & Conversational Flow:
+   - Understand the user naturally across dialects, informal speech, slang, and cultural greetings (e.g. "hala w ghala", "hi", "how are you", "what can you do").
+   - For greetings & introductions: Welcome the user warmly and introduce yourself as Masar AI.
+   - For capability questions ("how can you help me?", "what do you do?"): Clearly and engagingly outline how you can assist across the 7 playbook domains.
+   - For guidance on where to start ("which one do you recommend?", "where should we start?"): Provide consultative advice based on their current stage (resume for active applicants, STAR/tech for upcoming interviews, negotiation for job offers).
+   - Multi-turn continuity: Seamlessly track previous conversation context, follow up on pronouns ("what about the second one?", "give me an example"), and never loop or repeat introductory speeches.
 
-4. Evidence & Citations:
-   - When career references apply, cite the playbook name and page number naturally (e.g. [Salary Negotiation Playbook, Page 2]).`;
+3. Grounding & Citations:
+   - When "Career Playbook Reference Material" is provided below, strictly ground all factual recommendations in it and cite playbook names and page numbers (e.g. [Salary Negotiation Playbook, Page 2]).
+   - Zero tolerance for hallucinating outside facts when answering technical playbook questions.`;
 }
 
 async function answerQuestion(question, history, env, wantsStream = false) {
   const cleanedQuestion = cleanQuery(question);
   const isAr = isArabic(cleanedQuestion);
-
-  // Fast path 1: Topic Advice & Selection (which one to start with, which one do you recommend, where to begin)
-  if (isTopicAdviceOrChoiceQuestion(cleanedQuestion)) {
-    const resp = getTopicAdviceResponse(isAr);
-    if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
-    return { answer: resp, sources: [] };
-  }
-
-  // Fast path 2: Identity & Capabilities (who are you, what can you do, topics overview, how to help)
-  if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
-    const resp = getCapabilityResponse(isAr);
-    if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
-    return { answer: resp, sources: [] };
-  }
-
-  // Fast path 3: Greetings & Small Talk (hi, thanks, how are you, bye, هلا وغلا)
-  if (isGreetingOrSmallTalk(cleanedQuestion)) {
-    const greeting = getGreetingResponse(isAr);
-    if (wantsStream) return { stream: createStaticStream(greeting), sources: [] };
-    return { answer: greeting, sources: [] };
-  }
 
   // 1. Resolve Search Query (taking history into account for follow-ups)
   const searchQuery = await resolveSearchQuery(cleanedQuestion, history, isAr, env);
@@ -551,55 +384,28 @@ async function answerQuestion(question, history, env, wantsStream = false) {
     console.warn("RAG retrieval step encountered non-fatal error:", err);
   }
 
-  // Guardrail 1: Strictly handle empty/irrelevant retrieval
-  if (rankedChunks.length === 0) {
-    if (isTopicAdviceOrChoiceQuestion(cleanedQuestion)) {
-      const resp = getTopicAdviceResponse(isAr);
-      if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
-      return { answer: resp, sources: [] };
-    }
-
-    if (isIdentityOrCapabilityQuestion(cleanedQuestion)) {
-      const resp = getCapabilityResponse(isAr);
-      if (wantsStream) return { stream: createStaticStream(resp), sources: [] };
-      return { answer: resp, sources: [] };
-    }
-
-    if (isGreetingOrSmallTalk(cleanedQuestion)) {
-      const greeting = getGreetingResponse(isAr);
-      if (wantsStream) {
-        return { stream: createStaticStream(greeting), sources: [] };
-      }
-      return { answer: greeting, sources: [] };
-    }
-
-    // STRICT GROUNDING REFUSAL:
-    // Out-of-domain question (e.g., social studies, general trivia, unrelated inquiry)
-    const refusal = getOutOfDomainResponse(isAr);
-    if (wantsStream) {
-      return { stream: createStaticStream(refusal), sources: [] };
-    }
-    return { answer: refusal, sources: [] };
+  // 3. Build Grounded Context Block
+  let contextBlock = "";
+  if (rankedChunks.length > 0) {
+    contextBlock =
+      "Career Playbook Reference Material:\n\n" +
+      rankedChunks
+        .map(
+          (c, i) =>
+            `[Source ${i + 1}: ${formatDocName(c.document)}, Page ${c.page}]\n${c.text}`
+        )
+        .join("\n\n---\n\n") +
+      "\n\n";
   }
 
-  // 3. Build Grounded Context Block
-  const contextBlock =
-    "Career Playbook Reference Material:\n\n" +
-    rankedChunks
-      .map(
-        (c, i) =>
-          `[Source ${i + 1}: ${formatDocName(c.document)}, Page ${c.page}]\n${c.text}`
-      )
-      .join("\n\n---\n\n") +
-    "\n\n";
-
   const systemPrompt = buildMasterSystemPrompt(isAr);
-  const currentTurnContent = `${contextBlock}User Question: ${cleanedQuestion}`;
+  const currentTurnContent = contextBlock
+    ? `${contextBlock}User Question: ${cleanedQuestion}`
+    : `User Question: ${cleanedQuestion}`;
 
   // 4. Construct Multi-Turn Messages Array for LLM
   const messages = [{ role: "system", content: systemPrompt }];
 
-  // Append validated recent history
   if (Array.isArray(history) && history.length > 0) {
     history.forEach((msg) => {
       if (msg && (msg.role === "user" || msg.role === "assistant") && typeof msg.content === "string") {
@@ -611,7 +417,6 @@ async function answerQuestion(question, history, env, wantsStream = false) {
     });
   }
 
-  // Append current turn
   messages.push({
     role: "user",
     content: currentTurnContent,
@@ -639,7 +444,7 @@ async function answerQuestion(question, history, env, wantsStream = false) {
     max_tokens: 850,
   });
 
-  const answer = (llmResult && llmResult.response) || (isAr ? "أهلاً بك! كيف يمكنني مساعدتك؟" : "Hello! How can I help you today?");
+  const answer = (llmResult && llmResult.response) || (isAr ? "أهلاً بك! كيف يمكنني مساعدتك في مسارك المهني؟" : "Hello! How can I assist you with your career journey today?");
 
   return { answer, sources };
 }

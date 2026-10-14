@@ -13,7 +13,7 @@
 
 const TOP_K_CANDIDATES = 20;
 const TOP_N_AFTER_RERANK = 4;
-const RELEVANCE_THRESHOLD = 0.20; // Calibrated relevance threshold for bge-reranker-base
+const RELEVANCE_THRESHOLD = 0.40; // High-precision threshold: filters out spurious or tangential matches
 const MAX_QUESTION_LENGTH = 1000;
 const MAX_HISTORY_MESSAGES = 6;
 
@@ -304,7 +304,8 @@ function buildMasterSystemPrompt(isAr) {
    - لا تكرر نفسك في الرسائل المتتالية وتجنب العبارات المعلبة، تحدث كمرشد حقيقي يخوض جلسة تفاعلية مستمرة.
 
 3. التوثيق والمصادر (Grounded Citations):
-   - عند وجود نصوص في "Career Playbook Reference Material"، استند إليها بدقة في النصائح الفنية والخطوات العملية واذكر اسم الدليل ورقم الصفحة (مثال: [Resume Writing Best Practices, Page 2]).
+   - عند وجود نصوص في "Career Playbook Reference Material" تتعلق بسؤال المستخدم، اشرح المعلومات الفنية والخطوات العملية بالتفصيل والعمق المستفاد من المرجع، ولا تكتفِ بعبارات عامة مقتضبة مثل "يمكنني المساعدة في كذا"، بل قدّم الفائدة المهنية مباشرة مع ذكر اسم الدليل ورقم الصفحة.
+   - إذا كان سؤال المستخدم عاماً، تعارفياً، أو استفساراً عن قدراتك ولم تستند إلى محتوى المراجع الفنية في إجابتك، أجب بأسلوب مرن دون اختلاق أو ذكر أرقام صفحات.
    - لا تخترع أرقام صفحات أو حقائق تقنية غير مسندة في المراجع.`;
   }
 
@@ -332,7 +333,8 @@ CONVERSATIONAL INTELLIGENCE & STRICT GROUNDING GUIDELINES:
    - Multi-turn continuity: Seamlessly track previous conversation context, follow up on pronouns ("what about the second one?", "give me an example"), and never loop or repeat introductory speeches.
 
 3. Grounding & Citations:
-   - When "Career Playbook Reference Material" is provided below, strictly ground all factual recommendations in it and cite playbook names and page numbers (e.g. [Salary Negotiation Playbook, Page 2]).
+   - When "Career Playbook Reference Material" is provided and relevant to the user's question, provide substantive, concrete guidance directly from the text and cite playbook names and page numbers (e.g. [Salary Negotiation Playbook, Page 2]). Do not stop at superficial acknowledgements.
+   - If the user asks a broad conversational or meta question and no specific facts from the playbooks are being used, answer naturally without citing pages.
    - Zero tolerance for hallucinating outside facts when answering technical playbook questions.`;
 }
 

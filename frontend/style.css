@@ -221,7 +221,25 @@ body.app-mode .site-header {
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-  padding-right: 2px;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(238, 222, 197, 0.22) transparent;
+  padding: 2px 4px 4px 2px;
+}
+
+/* Eliminate all ugly horizontal OS scrollbars */
+.sidebar-playbooks-list::-webkit-scrollbar {
+  width: 4px;
+  height: 0px !important;
+}
+
+.sidebar-playbooks-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-playbooks-list::-webkit-scrollbar-thumb {
+  background: rgba(238, 222, 197, 0.22);
+  border-radius: 999px;
 }
 
 .sidebar-playbook-item {
@@ -234,9 +252,10 @@ body.app-mode .site-header {
   border-radius: 14px;
   cursor: pointer;
   text-align: left;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
   color: inherit;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -248,13 +267,13 @@ html[dir="rtl"] .sidebar-playbook-item {
 .sidebar-playbook-item.active {
   background: linear-gradient(135deg, rgba(238, 222, 197, 0.18) 0%, rgba(30, 72, 48, 0.5) 100%);
   border-color: rgba(238, 222, 197, 0.45);
-  transform: translateX(3px);
+  transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 html[dir="rtl"] .sidebar-playbook-item:hover,
 html[dir="rtl"] .sidebar-playbook-item.active {
-  transform: translateX(-3px);
+  transform: translateY(-1px);
 }
 
 .sb-item-icon {

@@ -138,15 +138,15 @@ body.app-mode .site-header {
 }
 
 .platform-layout.app-layout {
-  flex: 1;
+  flex: 1 1 0%;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
   align-items: stretch;
-  justify-content: center;
-  gap: 20px;
-  padding: 14px 24px 18px;
+  gap: 22px;
+  padding: 14px 28px 18px;
   height: calc(100vh - 72px);
-  max-width: 1360px;
-  margin: 0 auto;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -334,17 +334,20 @@ html[dir="rtl"] .sidebar-playbook-item.active {
 }
 
 .app-coach-section {
-  flex: 1;
-  min-width: 0;
-  width: auto;
-  max-width: 100%;
-  height: 100%;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
   padding-bottom: 0 !important;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
 }
 
 .app-coach-section .coach-container {
+  width: 100% !important;
+  max-width: 100% !important;
   height: 100% !important;
   max-height: 100% !important;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 50%, rgba(14, 34, 24, 0.22) 100%) !important;
@@ -359,26 +362,33 @@ html[dir="rtl"] .sidebar-playbook-item.active {
     inset 0 1px 2px 0 rgba(255, 255, 255, 0.6),
     inset 0 0 25px 0 rgba(255, 255, 255, 0.06),
     0 0 50px rgba(238, 222, 197, 0.14) !important;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 
 .app-coach-section .coach-header-bar {
+  width: 100% !important;
+  box-sizing: border-box !important;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
-  padding: 16px 24px !important;
+  padding: 16px 28px !important;
 }
 
 .app-coach-section .chat-log {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 24px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
 }
 
 /* ==========================================================================
@@ -519,7 +529,9 @@ html[dir="rtl"] .hero-action-card {
 
 /* Floating Pill Input Bar Styling */
 .app-coach-section .input-card {
-  padding: 14px 24px 16px;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 14px 28px 18px !important;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.08) 100%) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
   backdrop-filter: blur(24px) !important;
@@ -527,6 +539,9 @@ html[dir="rtl"] .hero-action-card {
 }
 
 .app-coach-section .chat-form {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   border-radius: 999px;
   padding: 6px 8px 6px 20px;
   background: linear-gradient(135deg, rgba(10, 24, 16, 0.65) 0%, rgba(6, 16, 11, 0.75) 100%) !important;
